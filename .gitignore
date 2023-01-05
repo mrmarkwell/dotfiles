@@ -1,0 +1,11 @@
+# Ignore everything
+*
+
+# But not these files...
+!.gitignore
+!.config/nvim/*
+!.vimrc
+!.nvimhelp
+!.tmux.conf
+!.bash_aliases
+!.shortcuts

@@ -1,0 +1,74 @@
+== Prerequisites ==
+sudo add-apt-repository ppa:neovim-ppa/unstable
+sudo apt-get update
+sudo apt-get install neovim
+sudo apt-get install ripgrep
+sudo apt-get install fd-find
+
+sudo npm install -g tree-sitter
+sudo npm install -g tree-sitter-cli
+
+== To update packages ==
+vim ~/.config/nvim/lua/markwell/packer.lua
+:so
+:PackerSync
+
+== General ==
+<leader>pv  - return to netrw directory listing
+<C-d>       - go down half a page, without moving cursor
+<C-u>       - go up half a page, without moving cursor
+<leader>y   - yank to system clipboard
+<leader>d   - cut to system clipboard
+<leader>s   - change token under cursor in file (vim find-replace)
+<leader>x   - make current file executable
+gb          - go back (jump back to last cursor position)
+<F8>        - rotate colorscheme
+<F10>       - toggle paste mode
+
+== Visual Mode ==
+J           - move highlighted code up one line
+K           - move highlighted code down one line
+
+== Telescope ==
+<leader>pf  - project file (all files) fuzzy finder
+<leader>ps  - grep in project
+<leader>gf  - git file fuzzy finder
+
+== Fugitive ==
+<leader>gs  - git status
+
+== Harpoon ==
+<leader>a   - add file to harpoon
+<C-e>       - harpoon quick menu
+<C-h>       - harpoon saved file 1
+<C-t>       - harpoon saved file 2
+<C-n>       - harpoon saved file 3
+<C-s>       - harpoon saved file 4
+
+== During LSP completion suggestion ==
+<C-p>       - previous suggestion
+<C-n>       - next suggestion
+<C-y>       - confirm selection under cursor
+<C-space>   - complete selection
+
+== LSP ==
+gd          - go to definition
+K           - hover info about word under cursor
+<leader>vws - view workspace symbol
+<leader>vd  - view diagnostic info about this line
+[d          - next diagnostic message
+]d          - prev diagnostic message
+<leader>vca - show list of code actions
+<leader>vrr - show references to token under cursor
+<leader>vrn - rename token under cursor
+<C-h>       - get signature help for token under cursor
+<leader>ff  - format file
+
+== Treesitter ==
+<leader>ts  - toggle treesitter playground (ast)
+
+== UndoTree ==
+<leader>u   - toggle undotree
+
+== ZenMode ==
+<leader>zz  - toggle zenmode

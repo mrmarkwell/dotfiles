@@ -1,0 +1,4 @@
+alias shortcuts='cat ~/.shortcuts'
+alias pytest='python -m pytest -v'
+alias act='~/bin/act'
+
