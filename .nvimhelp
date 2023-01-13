@@ -4,9 +4,14 @@ sudo apt-get update
 sudo apt-get install neovim
 sudo apt-get install ripgrep
 sudo apt-get install fd-find
+sudo apt-get install npm
 
 sudo npm install -g tree-sitter
 sudo npm install -g tree-sitter-cli
+
+install packer (see the packer README for most up-to-date command):
+git clone --depth 1 https://github.com/wbthomason/packer.nvim\
+ ~/.local/share/nvim/site/pack/packer/start/packer.nvim
 
 == To update packages ==
 vim ~/.config/nvim/lua/markwell/packer.lua
