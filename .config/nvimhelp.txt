@@ -1,0 +1,132 @@
+= Prerequisites ==
+sudo add-apt-repository ppa:neovim-ppa/unstable
+sudo apt-get update
+sudo apt-get install neovim
+sudo apt-get install ripgrep
+sudo apt-get install fd-find
+sudo apt-get install npm
+
+sudo npm install -g tree-sitter
+sudo npm install -g tree-sitter-cli
+sudo npm install -g neovim
+
+pip3 install pynvim
+
+Install rustup
+Install rust and cargo with rustup
+Install stylua with cargo
+
+Install lazy.nvim
+
+== To check nvim health ==
+
+:checkhealth
+
+== To manage packages ==
+<leader>L   - Open Lazy UI (Lazy manages nvim packages)
+<leader>M   - Open Mason UI (Mason manages LSP servers)
+
+== General ==
+<leader>q   - close current buffer.
+<C-d>       - go down half a page, without moving cursor
+<C-u>       - go up half a page, without moving cursor
+<leader>y   - yank to system clipboard
+<F8>        - rotate colorscheme
+<F10>       - toggle paste mode
+
+== Visual Mode ==
+J           - move highlighted code up one line
+K           - move highlighted code down one line
+gs          - sort highlighted lines
+
+== LSP Mappings ==
+Which-key can help. LSP mappings are all prefixed with 'g'.
+Type 'g' to see the mappings.
+gd          - go to definition
+gb          - go back (jump back to last cursor position)
+
+== Diagnostics ==
+<leader>n   - go to next diagnostic message
+<leader>N   - go to prev diagnostic message
+<leader>d   - prefix for all diagnostic help (<leader>dd == toggle trouble)
+<leader>dd  - Telescope Diagnostics
+<leader>dt  - Trouble Diagnostics (Toggle)
+
+== Buffer Management ==
+<left>      - Go to prev buffer (tabs at the top).
+<right>     - Go to next buffer (tabs at the top).
+<leader><left>  - Move buffer left.
+<leader><right> - Move buffer right.
+
+== Git Fugitive ==
+<leader>gs  - Git status window with git fugitive.
+
+== Signify ==
+L     - Go to next changed line (VCS changes)
+H     - Go to previous changed line (VCS changes)
+<leader>md  - Diff current hunk VCS changes.
+<leader>mu  - Undo (revert) changes in current hunk.
+<leader>mt  - Fig diff.
+
+== Telescope ==
+<leader>rr  - Telescope resume last picker.
+<leader>tt  - fuzzy search in treesitter AST for buffer.
+
+- prefixes:
+  <leader>c - codesearch
+  <leader>f - find_files
+  <leader>s - live_grep ("search")
+
+- Codesearch:
+<leader>cf  - Find files with codesearch.
+<leader>cq  - Find files with codesearch query.
+<leader>ca  - codesearch Android
+<leader>ct  - codesearch Tuscany
+
+- Files:
+<leader>fm  - Find in modified files (Citc client)
+<leader>fd  - Find in Neovim dotfiles.
+<leader>fh  - Find in nvim buffer history.
+<leader>fa  - Find in AOC.
+<leader>fc  - Find in CHRE.
+<leader>fp  - Find in project (current directory).
+<leader>fr  - Find related files.
+
+- Grep (Search):
+<leader>sd  - Search nvim dotfiles.
+<leader>sf  - Search current file (current buffer).
+<leader>sh  - Search help tags.
+<leader>sa  - Search AOC.
+<leader>sc  - Search CHRE.
+<leader>st  - Search treesitter.
+<leader>sp  - Search project (current directory).
+
+== Within the Telescope menu ==
+<C-x> go to file selection as a split
+<C-v> go to file selection as a vsplit
+<C-t> go to a file in a new tab
+
+== Filesystem Navigation (nvim-tree) ==
+<leader>te  - "tree explorer" - Open file explorer
+<leader>tf  - "tree find" - Find in file explorer
+In this menu:
+  O - expand all
+  u - go up one directory
+  d - go into directory
+
+== Treesitter ==
+<leader>ts  - toggle treesitter playground (ast)
+
+== UndoTree ==
+<leader>u   - toggle undotree
+
+== ZenMode ==
+<leader>zz  - toggle zenmode
+
+-- Less useful stuff --
+<leader>fs  - Opens symbol view of current buffer.
+
+== Coerce (Abolish) ==
+<leader>cr  - coercion options (e.g. <leader>crs == to_snake_case)
+<leader>w   - 'word' but respecting camel case.
+<leader>b   - 'back' but respecting camel case.
