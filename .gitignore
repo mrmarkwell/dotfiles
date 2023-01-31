@@ -1,11 +1,16 @@
 # Ignore everything
-*
+#*
 
 # But not these files...
+!*.lua
 !.gitignore
-!.config/nvim/*
+# gitignore quirk - parent folder must be first allowed, then subfiles.
+!/.config/
+!/.config/nvim/**
 !.vimrc
 !.nvimhelp
 !.tmux.conf
 !.bash_aliases
 !.shortcuts
+!/.dir_colors/
+!/.dir_colors/*

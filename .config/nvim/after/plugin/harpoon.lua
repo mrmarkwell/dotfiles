@@ -1,11 +1,16 @@
 local mark = require("harpoon.mark")
 local ui = require("harpoon.ui")
 
+-- 'a' for 'add'
 vim.keymap.set("n", "<leader>a", mark.add_file)
-vim.keymap.set("n", "<C-e>", ui.toggle_quick_menu)
+-- 'h' for 'harpoon'
+vim.keymap.set("n", "<C-h>", ui.toggle_quick_menu)
 
--- Use these keymaps to quickly swap between 4 files that are saved in Harpoon.
-vim.keymap.set("n", "<C-h>", function() ui.nav_file(1) end)
-vim.keymap.set("n", "<C-t>", function() ui.nav_file(2) end)
-vim.keymap.set("n", "<C-n>", function() ui.nav_file(3) end)
-vim.keymap.set("n", "<C-s>", function() ui.nav_file(4) end)
+-- Use these keymaps to quickly swap between files that are saved in Harpoon.
+vim.keymap.set("n", "<leader>1", function() ui.nav_file(1) end)
+vim.keymap.set("n", "<leader>2", function() ui.nav_file(2) end)
+vim.keymap.set("n", "<leader>3", function() ui.nav_file(3) end)
+vim.keymap.set("n", "<leader>4", function() ui.nav_file(4) end)
+vim.keymap.set("n", "<leader>5", function() ui.nav_file(5) end)
+vim.keymap.set("n", "<leader>6", function() ui.nav_file(6) end)
+vim.keymap.set("n", "<leader>7", function() ui.nav_file(7) end)

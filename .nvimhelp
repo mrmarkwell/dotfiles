@@ -8,10 +8,17 @@ sudo apt-get install npm
 
 sudo npm install -g tree-sitter
 sudo npm install -g tree-sitter-cli
+sudo npm install -g neovim
+
+pip3 install pynvim
 
 install packer (see the packer README for most up-to-date command):
 git clone --depth 1 https://github.com/wbthomason/packer.nvim\
  ~/.local/share/nvim/site/pack/packer/start/packer.nvim
+
+== To check nvim health ==
+
+:checkhealth
 
 == To update packages ==
 vim ~/.config/nvim/lua/markwell/packer.lua
@@ -35,20 +42,27 @@ J           - move highlighted code up one line
 K           - move highlighted code down one line
 
 == Telescope ==
-<leader>pf  - project file (all files) fuzzy finder
-<leader>ps  - grep in project
-<leader>gf  - git file fuzzy finder
+<leader>sl  - 'search local' - relative to current directory.
+<leader>sg  - 'search git'   - relative to current git repo.
+<leader>gl  - 'grep local'   - grep relative to current directory.
+<leader>gg  - 'grep git'     - grep relative to git repo.
+<leader>gr  - 'grep'         - uses 'grep-string' rather than 'live_grep'.
+
+== Within the Telescope menu ==
+<C-x> go to file selection as a split
+<C-v> go to file selection as a vsplit
+<C-t> go to a file in a new tab
 
 == Fugitive ==
 <leader>gs  - git status
 
 == Harpoon ==
 <leader>a   - add file to harpoon
-<C-e>       - harpoon quick menu
-<C-h>       - harpoon saved file 1
-<C-t>       - harpoon saved file 2
-<C-n>       - harpoon saved file 3
-<C-s>       - harpoon saved file 4
+<C-h>       - harpoon quick menu
+<C-1>       - harpoon saved file 1
+<C-2>       - harpoon saved file 2
+<C-3>       - harpoon saved file 3
+<C-4>       - harpoon saved file 4
 
 == During LSP completion suggestion ==
 <C-p>       - previous suggestion
