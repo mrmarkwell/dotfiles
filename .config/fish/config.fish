@@ -1,11 +1,4 @@
 if status --is-interactive
-  #set the stty settings so we can run gcert automatically. More info:
-  #https://g3doc.corp.google.com/company/tools/fish/index.md#enable-proper-stty-settings-at-startup
-  stty icrnl icanon iexten echo
-
-  prodcertstatus --quiet --check_remaining_hours 1 >/dev/null 2>&1
-  or prodaccess -s
-
 # Example Usage - find and replace in cpp files
 #       Make sure you're replacing only stuff you want to replace
 #   $ grepc SearchTerm
