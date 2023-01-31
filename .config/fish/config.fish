@@ -15,7 +15,8 @@ abbr -a sedc "findc | xargs sed"
 alias -s back 'prevd' > /dev/null
 alias -s next 'nextd' > /dev/null
 
-abbr -a tmux 'tmx2'
+abbr -a eb 'nvim ~/.config/fish/config.fish'
+abbr -a sb 'source ~/.config/fish/config.fish'
 
 abbr -a aliashelp 'less ~/.config/fish/config.fish | grep alias'
 abbr -a tmuxhelp 'less ~/.tmux.conf'
