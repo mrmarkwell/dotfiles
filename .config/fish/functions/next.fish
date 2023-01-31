@@ -1,3 +1,4 @@
 function next --wraps=nextd --description 'alias next nextd'
-  nextd $argv; 
+  nextd $argv
+        
 end
