@@ -25,7 +25,7 @@ vim.opt.undofile = true
 
 vim.opt.wrap = false
 
-vim.opt.hlsearch = false
+vim.opt.hlsearch = true
 vim.opt.incsearch = true
 
 vim.opt.termguicolors = true
@@ -50,6 +50,7 @@ vim.g.mapleader = " "
 vim.g.loaded_gzip = true
 vim.g.loaded_matchit = true
 --vim.g.loaded_matchparen = true
+vim.g.loaded_netrw = true
 vim.g.loaded_netrwPlugin = true
 vim.g.loaded_tarPlugin = true
 vim.g.loaded_tohtml = true

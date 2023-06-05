@@ -5,6 +5,7 @@ return {
     "hrsh7th/cmp-buffer",
     "hrsh7th/cmp-cmdline",
     "hrsh7th/cmp-nvim-lsp",
+    "hrsh7th/cmp-nvim-lsp-signature-help",
     "hrsh7th/cmp-nvim-lua",
     "saadparwaiz1/cmp_luasnip",
     "l3mon4d3/luasnip",
@@ -84,6 +85,7 @@ return {
       sources = {
         -- TODO does this work with register_source_with_nvim_cmp
         -- { name = "nvim_ciderlsp" },
+        { name = "nvim_lsp_signature_help" },
         { name = "luasnip" },
         { name = "nvim_lsp" },
         { name = "nvim_lua" },

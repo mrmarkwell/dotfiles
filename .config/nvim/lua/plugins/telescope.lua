@@ -3,7 +3,7 @@ _G.live_grep = function(search_dirs, prompt_title, follow, hidden)
   prompt_title = prompt_title or "Find Files"
   follow = follow or false
   hidden = hidden or false
-  require("telescope.builtin").live_grep({
+  require("telescope").extensions.live_grep_args.live_grep_args({
     prompt_title = prompt_title,
     search_dirs = search_dirs,
     follow = follow,
@@ -54,6 +54,7 @@ return {
   dependencies = {
     "nvim-lua/plenary.nvim",
     "nvim-treesitter/nvim-treesitter",
+    "nvim-telescope/telescope-live-grep-args.nvim",
     { "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
   },
   cmd = "Telescope",
@@ -106,10 +107,42 @@ return {
           "%.git/",
           "%.orig",
         },
+        -- The vertical layout strategy is good to handle long paths like those in
+        -- google3 repos because you have nearly the full screen to display a file path.
+        -- The caveat is that the preview area is smaller.
+        layout_strategy = "vertical",
         layout_config = {
-          prompt_position = "top",
+          prompt_position = "bottom",
+          vertical = { height = 0.95, width = 0.95 },
           horizontal = { height = 0.95, width = 0.95 },
         },
+        -- Common paths in google3 repos are collapsed following the example of Cider
+        -- It is nice to keep this as a user config rather than part of
+        -- telescope-codesearch because it can be reused by other telescope pickers.
+        path_display = function(opts, path)
+          -- Do common substitutions
+          path = path:gsub("^/google/src/cloud/[^/]+/[^/]+/google3/", "~/google3/", 1)
+          path = path:gsub("^/usr/local/google/home/markwell/android/", "~/android/", 1)
+          path = path:gsub("^/usr/local/google/home/markwell/aoc/", "~/aoc/", 1)
+          path = path:gsub("^/usr/local/google/home/markwell/", "~/", 1)
+          path = path:gsub("^~/repos/aoc/", "~/aoc/", 1)
+          path = path:gsub("^~/repos/master/", "~/android/", 1)
+
+          -- Do truncation. This allows us to combine our custom display formatter
+          -- with the built-in truncation.
+          -- `truncate` handler in transform_path memoizes computed truncation length in opts.__length.
+          -- Here we are manually propagating this value between new_opts and opts.
+          -- We can make this cleaner and more complicated using metatables :)
+          local new_opts = {
+            path_display = {
+              truncate = 3,
+            },
+            __length = opts.__length,
+          }
+          path = require("telescope.utils").transform_path(new_opts, path)
+          opts.__length = new_opts.__length
+          return path
+        end,
         mappings = {
           n = {
             p = require("telescope.actions.layout").toggle_preview,
@@ -122,5 +155,6 @@ return {
       },
     })
     telescope.load_extension("fzf")
+    telescope.load_extension("live_grep_args")
   end,
 }

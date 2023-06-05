@@ -35,7 +35,7 @@ set mouse=a
 
 " Mouse should work all the way to the right side of the screen.
 if !has('nvim')
-  set ttymouse=sgr
+set ttymouse=sgr
 endif
 
 set backspace=2
@@ -86,10 +86,12 @@ let g:ycm_key_list_stop_completion = ['<C-y>', '<CR>']
 "let g:ycm_collect_identifiers_from_tags_files = 1
 let g:ycm_confirm_extra_conf = 0
 
+
 " Enable for ANDROID
-let g:ycm_python_interpreter_path='/usr/bin/python3'
-let g:ycm_python_binary_path='/usr/bin/python3'
+"let g:ycm_python_interpreter_path='/usr/bin/python3'
+"let g:ycm_python_binary_path='/usr/bin/python3'
 "let g:ycm_use_clangd=0
+"let g:ycm_global_ycm_extra_conf='/usr/local/google/home/markwell/android_dev/ycm_extra_conf.py'
 
 highlight ErrorMsg ctermbg=blue ctermfg=white
 highlight SpellBad ctermbg=blue ctermfg=white
@@ -99,8 +101,26 @@ highlight YcmErrorSection ctermbg=blue ctermfg=white
 
 "{{{ Functions
 
+"Toggle YouCompleteMe on and off with F3
+function ToggleYcm()
+    if g:ycm_show_diagnostics_ui == 0
+        let g:ycm_auto_trigger = 1
+        let g:ycm_show_diagnostics_ui = 1
+        let g:ycm_enable_diagnostic_highlighting = 1
+        let g:ycm_enable_diagnostic_signs = 1
+        :YcmRestartServer
+        :echo "YCM On"
+    elseif g:ycm_show_diagnostics_ui == 1
+        let g:ycm_auto_trigger = 0
+        let g:ycm_show_diagnostics_ui = 0
+        let g:ycm_enable_diagnostic_highlighting = 0
+        let g:ycm_enable_diagnostic_signs = 0
+        :YcmRestartServer
+        :echo "YCM Off"
+    endif
+endfunction
+map <F3> :call ToggleYcm() <CR>
 
-"{{{Theme Rotating
 let themeindex=0
 function! RotateColorTheme()
    let y = -1
@@ -117,7 +137,6 @@ function! RotateColorTheme()
       endif
    endwhile
 endfunction
-" }}}
 
 "}}}
 
@@ -180,8 +199,8 @@ nnoremap <silent> <End> a <Esc>r
 nnoremap <silent> zj o<Esc>
 nnoremap <silent> zk O<Esc>
 
-" leader-f will toggle folds
-" nnoremap <leader>f za
+" Comma will toggle folds
+nnoremap , za
 
 " Make it easier to delete without cutting
 nnoremap <leader>d "_d
@@ -199,6 +218,14 @@ imap <Down>  <nop>
 imap <Left>  <nop>
 imap <Right> <nop>
 
+" j k back to back exits insert mode.
+"inoremap <special> jk <Esc>
+
+" This exists to make <Esc>O not lag.
+set timeout ttimeout         " separate mapping and keycode timeouts
+set timeoutlen=500           " mapping timeout 500ms  (adjust for preference)
+set ttimeoutlen=10           " keycode timeout 20ms
+
 " Escape char will bring you back to edit mode in a terminal instance
 " (:terminal)
 tnoremap <Esc> <C-\><C-n>
@@ -213,95 +240,3 @@ set completeopt=longest,menuone,preview
 
 "}}}
 
-"{{{ More things
-
-"======================"
-" Vundle configuration "
-"======================"
-
-filetype off
-set rtp+=~/.vim/bundle/Vundle.vim
-if isdirectory(expand('$HOME/.vim/bundle/Vundle.vim'))
-  call vundle#begin()
-  " Required
-  " let Vundle manage Vundle, required
-  Plugin 'VundleVim/Vundle.vim'
-  Plugin 'gmarik/vundle'
-  " Install plugins that come from github.  Once Vundle is installed, these can be
-  " Add maktaba and codefmt to the runtimepath.
-  " (The latter must be installed before it can be used.)
-  Plugin 'google/vim-maktaba'
-  Plugin 'google/vim-codefmt'
-  " Also add Glaive, which is used to configure codefmt's maktaba flags. See
-  " `:help :Glaive` for usage.
-  Plugin 'google/vim-glaive'
-  " installed with :PluginInstall
-  "Plugin 'scrooloose/nerdcommenter'
-  "Plugin 'Valloric/MatchTagAlways'
-  "Plugin 'vim-scripts/netrw.vim'
-  "Plugin 'tpope/vim-sensible'
-  "Plugin 'SirVer/ultisnips'
-  Plugin 'Valloric/YouCompleteMe'
-  " Provide many default snippets for a variety of snippets.
-  " Uncomment and :PluginInstall to enable
-  " Plugin 'honza/vim-snippets'
-  call vundle#end()
-  call glaive#Install()
-  Glaive codefmt plugin[mappings]
-else
-  echomsg 'Vundle is not installed. You can install Vundle from'
-      \ 'https://github.com/VundleVim/Vundle.vim'
-endif
-
-filetype plugin indent on
-
-"===================="
-" Some basic options "
-"===================="
-
-" Enable syntax highlighting
-syntax on
-
-" Uncomment if you want to map ; to : to cut down on chording
-" nnoremap ; :
-
-" Automatically change the working path to the path of the current file
-autocmd BufNewFile,BufEnter * silent! lcd %:p:h
-
-" Show line numbers
-set number
-
-" use » to mark Tabs and ° to mark trailing whitespace. This is a
-" non-obtrusive way to mark these special characters.
-"set list listchars=tab:»\
-" ,trail:°
-
-
-" Highlight the search term when you search for it.
-set hlsearch
-
-" By default, it looks up man pages for the word under the cursor, which isn't
-" very useful, so we map it to something else.
-nnoremap <s-k> <CR>
-
-" Explicitly set the Leader to space. You can use '\' (the default),
-" or anything else (some people like ';').
-let mapleader=' '
-
-" Wrap autocmds inside an augroup to protect against reloading this script.
-" For more details, see:
-" http://learnvimscriptthehardway.stevelosh.com/chapters/14.html
-augroup autoformat
-  autocmd!
-  " Autoformat go files on write.
-  autocmd FileType go AutoFormatBuffer gofmt
-  " Autoformat proto files on write.
-  autocmd FileType proto AutoFormatBuffer clang-format
-  " Autoformat c and c++ files on write.
-  autocmd FileType c,cpp AutoFormatBuffer clang-format
-  " Autoformat python with autopep8
-  autocmd FileType python AutoFormatBuffer autopep8
-
-augroup END
-
-" }}}

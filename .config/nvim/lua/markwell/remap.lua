@@ -12,6 +12,17 @@ function _G.vmap(lhs, rhs, desc, opts)
   vim.keymap.set("v", lhs, rhs, opts)
 end
 
+function _G.imap(lhs, rhs, desc, opts)
+  opts = opts or {}
+  opts.desc = desc
+  vim.keymap.set("i", lhs, rhs, opts)
+end
+
+-- Big keyboards have backtick where my escape key is on my little keyboard.
+nmap("`", "<esc>")
+vmap("`", "<esc>")
+imap("`", "<esc>")
+
 -- make it possible to move highighted lines with capital J and K
 vmap("J", ":m '>+1<CR>gv=gv")
 vmap("K", ":m '<-2<CR>gv=gv")

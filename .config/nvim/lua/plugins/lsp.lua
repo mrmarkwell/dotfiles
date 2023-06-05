@@ -1,13 +1,14 @@
--- This nifty command starts clangd for Android buffers only.
-vim.api.nvim_create_autocmd("VimEnter", {
-  pattern = { "/usr/local/google/home/markwell/repos/master/*" },
-  group = vim.api.nvim_create_augroup("cpp_lsp", {}),
-  callback = function()
-    -- TODO(markwell): Why doesn't this work?
-    vim.cmd("LspStop ciderlsp")
-    vim.cmd("LspStart clangd")
-  end,
-})
+-- Helper function for formatting the entire file.
+vim.cmd([[
+function MyFormatFile()
+  let l:lines="all"
+  py3f /usr/lib/clang-format/clang-format.py
+endfunction
+]])
+
+_G.format_cpp_file = function()
+  vim.cmd([[call MyFormatFile()]])
+end
 
 return {
   {
@@ -29,7 +30,7 @@ return {
           "emmet_ls",
           "html",
           -- 'jsonls',
-          "sumneko_lua",
+          "lua_ls",
           "clangd",
           -- 'yamlls',
         },
@@ -50,7 +51,7 @@ return {
             cmd = {
               "clangd",
               "--pch-storage=memory",
-              "-j=10",
+              "-j=20",
               "--header-insertion=iwyu",
               "--clang-tidy",
               "--fallback-style=Google",
@@ -59,11 +60,12 @@ return {
             on_attach = require("markwell.lsp-util").on_attach,
             -- Only use clangd on projects that proplerly setup compilation database.
             -- See: https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md#clangd
-            single_file_support = false,
+            --    TODO: should I set this?
+            --    single_file_support = false,
           })
         end,
-        sumneko_lua = function()
-          require("lspconfig").sumneko_lua.setup({
+        lua_ls = function()
+          require("lspconfig").lua_ls.setup({
             capabilities = require("cmp_nvim_lsp").default_capabilities(),
             on_attach = require("markwell.lsp-util").on_attach,
             settings = {
@@ -126,7 +128,23 @@ return {
       nmap("gb", "<C-o>", "Go back")
       nmap("<leader>n", vim.diagnostic.goto_next, "Go to next diagnostic")
       nmap("<leader>N", vim.diagnostic.goto_prev, "Go to prev diagnostic")
-      nmap("<leader>F", vim.lsp.buf.format, "Format file")
+      nmap("<leader>F", function()
+        if vim.bo.filetype == "cpp" then
+          format_cpp_file()
+        else
+          vim.lsp.buf.format()
+        end
+      end, "Format file")
+      vmap("<leader>F", ":py3f /usr/lib/clang-format/clang-format.py<CR>gv=gv", "Format Lines CPP")
+      vmap("<leader>ff", function()
+        vim.lsp.buf.format({
+          async = true,
+          range = {
+            ["start"] = vim.api.nvim_buf_get_mark(0, "<"),
+            ["end"] = vim.api.nvim_buf_get_mark(0, ">"),
+          },
+        })
+      end, "Format Lines")
       nmap("<leader>M", "<cmd>Mason<CR>", "Open Mason UI")
     end,
   },
