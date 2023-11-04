@@ -40,6 +40,8 @@ set -Ux GNANOAPPS ~/google3/location/lbs/contexthub/nanoapps
 set -Ux CHREP $AND/vendor/google_devices/common/chre/platform
 set -Ux CONTEXTHUB $AND/vendor/google_contexthub
 set -Ux AMBIENT ~/google3/hardware/gchips/ambient
+set -Ux ACT $AMBIENT/java/com/google/act
+set -Ux EDITOR nvim
 
 # Required for AOC dev.
 set -Ux AOC_TOP_DIR $AOC
@@ -69,7 +71,7 @@ set -Ux PDEPTH $TUSCANY/core_libraries/production/face_engine/components/face_pa
 #       Or
 #   $ sedc -i 's/SearchTerm/ReplaceTerm/g'
 abbr -a rg "rg --no-heading" # ripgrep is _way_ faster than grep.
-abbr -a rgg "rg --no-heading -uuL" # ripgrep is _way_ faster than grep.
+abbr -a rgg "rg --no-heading -uuLi" # ripgrep is _way_ faster than grep.
 abbr -a fd "fdfind" # fd is _way_ faster than find.
 abbr -a findc "fd -e cc -e cpp -e c -e h"
 abbr -a grepc "findc | xargs rg"
@@ -90,7 +92,7 @@ alias -s next 'nextd' > /dev/null
 #android dev
 abbr -a flashall '$AND/vendor/google/tools/flashall'
 # Nested abbreviations aren't possible, so use a function.
-alias -s lunchc 'cd $AND && bass "source $AND/build/envsetup.sh && lunch panther-userdebug" && back' > /dev/null
+alias -s lunchc 'cd $AND && bass "source $AND/build/envsetup.sh && lunch shiba-trunk_staging-userdebug" && back' > /dev/null
 # go/vscode/android#generating-the-compile-commandsjson-file
 alias -s rebuild_android_completion_database 'lunchc && cd $AND && bass "source $AND/build/envsetup.sh && m -j66 nothing && m -j66 SOONG_GEN_COMPDB=1 SOONG_LINK_COMPDB_TO=$ANDROID_BUILD_TOP nothing" && back' > /dev/null
 abbr -a logcatc 'adb logcat -c'
@@ -136,6 +138,7 @@ abbr -a cdaoc "cd $AOC/AOC"
 abbr -a cdnano "cd $NANOAPPS"
 abbr -a cdgnano "cd $GNANOAPPS"
 abbr -a cdambient "cd $AMBIENT"
+abbr -a cdact "cd $ACT"
 abbr -a cdtpu "cd ~/aoc/AOC/drivers/tpu"
 
 #new g3 aliases (since switching to fig)
@@ -233,6 +236,7 @@ set -U tide_fig_prompt_description_max 15
 
 # Fish prompt
 fish_add_path ~/.cargo/bin
+fish_add_path ~/.local/bin
 
 source ~/.config/fish/shortcuts.fish
 

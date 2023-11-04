@@ -13,7 +13,8 @@ return {
       fold_closed = "", -- icon used for closed folds
       group = true, -- group results by file
       padding = true, -- add an extra new line on top of the list
-      action_keys = { -- key mappings for actions in the trouble list
+      action_keys = {
+        -- key mappings for actions in the trouble list
         -- map to {} to remove a mapping, for example:
         -- close = {},
         close = "q", -- close the list
@@ -57,5 +58,6 @@ return {
     { "<leader>dd", "<cmd>Trouble document_diagnostics<CR>", desc = "Trouble Doc Diagnostics" },
     { "<leader>dl", "<cmd>Trouble loclist<CR>", desc = "Trouble Loclist" },
     { "<leader>dq", "<cmd>Trouble quickfix<CR>", desc = "Trouble Quickfix" },
+    { "K", vim.diagnostic.open_float, desc = "Open Diagnostic Float" },
   },
 }

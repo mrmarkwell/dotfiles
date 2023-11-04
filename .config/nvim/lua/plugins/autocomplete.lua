@@ -94,6 +94,17 @@ return {
       sorting = {
         comparators = {}, -- We stop all sorting to let the lsp do the sorting
       },
+      -- Disable inside comments.
+      enabled = function()
+        if
+          require("cmp.config.context").in_treesitter_capture("comment") == true
+          or require("cmp.config.context").in_syntax_group("Comment")
+        then
+          return false
+        else
+          return true
+        end
+      end,
       formatting = {
         format = require("lspkind").cmp_format({
           with_text = true,

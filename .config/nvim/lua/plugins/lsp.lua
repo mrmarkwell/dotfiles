@@ -1,14 +1,14 @@
 -- Helper function for formatting the entire file.
-vim.cmd([[
-function MyFormatFile()
-  let l:lines="all"
-  py3f /usr/lib/clang-format/clang-format.py
-endfunction
-]])
-
-_G.format_cpp_file = function()
-  vim.cmd([[call MyFormatFile()]])
-end
+--vim.cmd([[
+--function MyFormatFile()
+--  let l:lines="all"
+--  py3f /usr/lib/clang-format/clang-format.py
+--endfunction
+--]])
+--
+--_G.format_cpp_file = function()
+--  vim.cmd([[call MyFormatFile()]])
+--end
 
 return {
   {
@@ -128,23 +128,24 @@ return {
       nmap("gb", "<C-o>", "Go back")
       nmap("<leader>n", vim.diagnostic.goto_next, "Go to next diagnostic")
       nmap("<leader>N", vim.diagnostic.goto_prev, "Go to prev diagnostic")
-      nmap("<leader>F", function()
-        if vim.bo.filetype == "cpp" then
-          format_cpp_file()
-        else
-          vim.lsp.buf.format()
-        end
-      end, "Format file")
-      vmap("<leader>F", ":py3f /usr/lib/clang-format/clang-format.py<CR>gv=gv", "Format Lines CPP")
-      vmap("<leader>ff", function()
-        vim.lsp.buf.format({
-          async = true,
-          range = {
-            ["start"] = vim.api.nvim_buf_get_mark(0, "<"),
-            ["end"] = vim.api.nvim_buf_get_mark(0, ">"),
-          },
-        })
-      end, "Format Lines")
+      -- Glug codefmt handles this formatting stuff now.
+      --      nmap("<leader>F", function()
+      --        if vim.bo.filetype == "cpp" then
+      --          format_cpp_file()
+      --        else
+      --          vim.lsp.buf.format()
+      --        end
+      --      end, "Format file")
+      --      vmap("<leader>F", ":py3f /usr/lib/clang-format/clang-format.py<CR>gv=gv", "Format Lines CPP")
+      --      vmap("<leader>ff", function()
+      --        vim.lsp.buf.format({
+      --          async = true,
+      --          range = {
+      --            ["start"] = vim.api.nvim_buf_get_mark(0, "<"),
+      --            ["end"] = vim.api.nvim_buf_get_mark(0, ">"),
+      --          },
+      --        })
+      --      end, "Format Lines")
       nmap("<leader>M", "<cmd>Mason<CR>", "Open Mason UI")
     end,
   },

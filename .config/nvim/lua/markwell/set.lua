@@ -4,6 +4,7 @@ vim.opt.relativenumber = true
 vim.opt.tabstop = 2
 vim.opt.softtabstop = 2
 vim.opt.shiftwidth = 2
+vim.opt.textwidth = 80
 vim.opt.expandtab = true
 vim.opt.smarttab = true
 
@@ -35,7 +36,7 @@ vim.opt.signcolumn = "yes"
 vim.opt.isfname:append("@-@")
 
 vim.opt.updatetime = 50
-vim.opt.colorcolumn = "80"
+vim.opt.colorcolumn = "81" -- Putting this at 81 since the 80 is the limit.
 
 vim.opt.pastetoggle = "<F10>"
 

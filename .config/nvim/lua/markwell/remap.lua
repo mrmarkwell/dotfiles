@@ -19,9 +19,11 @@ function _G.imap(lhs, rhs, desc, opts)
 end
 
 -- Big keyboards have backtick where my escape key is on my little keyboard.
-nmap("`", "<esc>")
-vmap("`", "<esc>")
-imap("`", "<esc>")
+function TildeMapToEsc()
+  nmap("`", "<esc>")
+  vmap("`", "<esc>")
+  imap("`", "<esc>")
+end
 
 -- make it possible to move highighted lines with capital J and K
 vmap("J", ":m '>+1<CR>gv=gv")
