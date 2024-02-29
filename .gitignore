@@ -25,3 +25,4 @@ __bass.py
 nixos/lxd.nix
 nixos/orbstack.nix
 nixos/hardware-configuration.nix
+nixos/nixos-switch.log
