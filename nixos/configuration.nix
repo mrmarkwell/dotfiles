@@ -63,6 +63,9 @@ with lib; {
   #   extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
   # };
 
+  nix.nixPath = ["nixpkgs=/nix/var/nix/profiles/per-user/root/channels/nixos:nixos-config=/home/markwell/dotfiles/nixos/configuration.nix:/nix/var/nix/profiles/per-user/root/channels"];
+  environment.sessionVariables.EDITOR = "vim";
+
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
@@ -71,7 +74,7 @@ with lib; {
     fish
     man
     alejandra
-    #   wget
+    wget
     #   firefox
   ];
 
@@ -108,5 +111,7 @@ with lib; {
   # As this is intended as a stadalone image, undo some of the minimal profile stuff
   documentation.enable = true;
   documentation.nixos.enable = true;
+  documentation.man.enable = true;
+  documentation.dev.enable = true;
   environment.noXlibs = false;
 }
