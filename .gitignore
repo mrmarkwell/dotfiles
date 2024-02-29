@@ -20,3 +20,8 @@ fish_variables
 
 bass.fish
 __bass.py
+
+# Don't track hardware configuration stuff.
+nixos/lxd.nix
+nixos/orbstack.nix
+nixos/hardware-configuration.nix
