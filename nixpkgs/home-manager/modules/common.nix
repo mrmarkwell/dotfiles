@@ -12,11 +12,17 @@
     fzf
     rename
     neofetch # fancy system + hardware info
-    zoxide # habitual `cd`
+    zoxide # better cd
+    eza # better ls. (This used to be called exa, and provides 'exa' alias.
+    fd # better find
+
+    hyperfine
+    fortune-kind
+    cowsay
 
     # better du alternative
-    du-dust
-    ripgrep
+    du-dust # better du
+    ripgrep # better grep
     graphviz
 
     # TODO check this out.

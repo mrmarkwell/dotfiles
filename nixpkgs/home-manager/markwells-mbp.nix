@@ -11,7 +11,7 @@
     ./modules/common.nix
     ./modules/git.nix
     ./modules/tmux.nix
-#    ./modules/fish.nix
+    ./modules/fish.nix
 #    ./modules/neovim.nix
 #    ./modules/ssh.nix
   ];
