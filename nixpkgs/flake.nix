@@ -16,6 +16,7 @@
 
   outputs = inputs: {
       homeConfigurations = {
+        # Activate with `home-manager switch --flake .#markwells-mbp`
         markwells-mbp = inputs.home-manager.lib.homeManagerConfiguration {
           pkgs = inputs.nixpkgs.legacyPackages.x86_64-darwin;
           modules = [ ./home-manager/markwells-mbp.nix ];

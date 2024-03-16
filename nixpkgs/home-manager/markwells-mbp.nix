@@ -1,14 +1,15 @@
 # This file is the configuration for the markwells-mbp host.
 # It composes other nix files to configure my macbook how I want it.
 # markwells-mbp is the name of the host. Add new hosts in the same way.
+# load this with `home-manager switch --flake .#markwells-mbp`
 { config, lib, pkgs, ... }:
 
 {
 # If you want to control things directly with nix, they should be imported here.
   imports = [
     ./modules/home-manager.nix
+    ./modules/common.nix
 #    ./modules/fish.nix
-#    ./modules/common.nix
 #    ./modules/git.nix
 #    ./modules/neovim.nix
 #    ./modules/ssh.nix
