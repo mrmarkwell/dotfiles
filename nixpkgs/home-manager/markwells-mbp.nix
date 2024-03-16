@@ -9,8 +9,9 @@
   imports = [
     ./modules/home-manager.nix
     ./modules/common.nix
+    ./modules/git.nix
+    ./modules/tmux.nix
 #    ./modules/fish.nix
-#    ./modules/git.nix
 #    ./modules/neovim.nix
 #    ./modules/ssh.nix
   ];

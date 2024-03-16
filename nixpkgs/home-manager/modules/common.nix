@@ -31,11 +31,6 @@
     libuuid # `uuidgen` (already pre-installed on mac)
   ];
 
-  programs.tmux = {
-    enable = true;
-    clock24 = true;
-  };
-
   programs.dircolors = {
     enable = true;
   };

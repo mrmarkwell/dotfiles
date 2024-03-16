@@ -8,10 +8,10 @@
       url = "github:nix-community/home-manager/release-23.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    # darwin = {
-    #   url = "github:lnl7/nix-darwin/master";
-    #   inputs.nixpkgs.follows = "nixpkgs";
-    # };
+    darwin = {
+      url = "github:lnl7/nix-darwin/master";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs: {
@@ -23,22 +23,25 @@
           extraSpecialArgs = { pkgsUnstable = inputs.nixpkgsUnstable.legacyPackages.x86_64-darwin; };
         };
 
-      # darwinConfigurations = {
-      #   markwells-mbp = darwin.lib.darwinSystem {
-      #     system = "x86_64-darwin";
-      #     modules = [
-      #       ./darwin/markwells-mbp/configuration.nix
-      #       home-manager.darwinModules.home-manager
-      #       {
-      #         home-manager.useGlobalPkgs = true;
-      #         home-manager.useUserPackages = true;
-      #         home-manager.users.markwell = import ./home-manager/markwells-mbp.nix;
-      #         home-manager.extraSpecialArgs = { inherit nixpkgs; pkgsUnstable = inputs.nixpkgsUnstable.legacyPackages.x86_64-darwin; };
-      #       }
-      #     ];
-      #     inputs = { inherit darwin nixpkgs; };
-      #   };
-      # };
+#      darwinConfigurations = {
+#        # nix build .#darwinConfigurations.markwells-mbp.system
+#        # ./result/sw/bin/darwin-rebuild switch --flake .
+#        # also requires running `chsh -s /run/current-system/sw/bin/fish` once
+#        markwells-mbp = darwin.lib.darwinSystem {
+#          system = "x86_64-darwin";
+#          modules = [
+#            ./darwin/markwells-mbp/configuration.nix
+#            home-manager.darwinModules.home-manager
+#            {
+#              home-manager.useGlobalPkgs = true;
+#              home-manager.useUserPackages = true;
+#              home-manager.users.markwell = import ./home-manager/markwells-mbp.nix;
+#              home-manager.extraSpecialArgs = { inherit nixpkgs; pkgsUnstable = inputs.nixpkgsUnstable.legacyPackages.x86_64-darwin; };
+#            }
+#          ];
+#          inputs = { inherit darwin nixpkgs; };
+#        };
+#      };
 };
 };
 }

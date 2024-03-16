@@ -8,7 +8,7 @@
     delta = {
       enable = true;
       options = {
-        syntax-theme = "solarized-dark";
+        syntax-theme = "Dracula";
         side-by-side = true;
       };
     };
@@ -20,7 +20,7 @@
 
       push.autoSetupRemote = true;
 
-      core.editor = "nvim";
+      core.editor = "vim";
       core.fileMode = false;
       core.ignorecase = false;
     };
