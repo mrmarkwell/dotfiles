@@ -3,6 +3,10 @@
   programs.fish = {
     enable = true;
     interactiveShellInit = ''
+# First things first - start tmux if it isn't started.
+if not set -q TMUX
+    exec tmux a -d
+end
 fish_add_path ~/.cargo/bin
 fish_add_path ~/.local/bin
 
