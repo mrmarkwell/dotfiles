@@ -14,3 +14,4 @@ Notes
 
 Steps I could not automate:
 - Tide is not integrated into fish properly. Installing it manually according to the instructions provided in the github repo is required (Testing this TBD).
+- If this is a macbook, the default iterm2 color scheme is trash. Import .itermcolors files (like the Tokyo Night ones here): https://github.com/folke/tokyonight.nvim/tree/main/extras
