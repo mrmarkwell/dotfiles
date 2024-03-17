@@ -19,7 +19,8 @@ fish_add_path ~/.local/bin
 
       # Enable zoxide `z` (https://github.com/ajeetdsouza/zoxide)
       if command -v zoxide &>/dev/null
-        zoxide init fish | source
+        # Use zoxide as `cd` (and `cdi`).
+        zoxide init --cmd cd fish | source
       end
 wisdom
     '';
