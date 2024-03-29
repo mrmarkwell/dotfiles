@@ -20,6 +20,11 @@
     fortune-kind
     cowsay
 
+    # Unstable because we want a version that uses toml, not yaml.
+    pkgsUnstable.alacritty
+
+    pkgsUnstable.neovim
+
     # better du alternative
     du-dust # better du
     ripgrep # better grep
@@ -40,6 +45,13 @@
   programs.dircolors = {
     enable = true;
   };
+
+  #home.file = {
+    # Building this configuration will create a copy of '' in
+    # the Nix store. Activating the configuration will then make '~/.screenrc' a
+    # symlink to the Nix store copy.
+    # ".config/alacritty/alacritty.toml".source = alacritty.toml;
+  #};
 
 }
 
