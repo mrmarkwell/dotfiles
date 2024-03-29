@@ -19,7 +19,7 @@ fish_add_path ~/.local/bin
       set -x GREP_COLOR '3;33'
 
       # TODO(markwell): Update to nvim when ready.
-      set EDITOR vim
+      set EDITOR nvim
 
       # Enable zoxide `z` (https://github.com/ajeetdsouza/zoxide)
       if command -v zoxide &>/dev/null
@@ -78,6 +78,7 @@ neovim = "hyperfine 'nvim --headless +qa' --warmup 5";
       "..." = "cd ../..";
       "...." = "cd ../../..";
       "....." = "cd ../../../..";
+    vim = "nvim";
     };
   };
 }
