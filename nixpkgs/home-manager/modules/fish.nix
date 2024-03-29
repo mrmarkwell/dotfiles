@@ -11,9 +11,6 @@ fish_add_path ~/.cargo/bin
 fish_add_path ~/.local/bin
 
 
-      # Setup terminal, and turn on colors
-      set -x TERM xterm-256color
-
       # Enable color in grep
       set -x GREP_OPTIONS '--color=auto'
       set -x GREP_COLOR '3;33'
