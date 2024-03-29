@@ -550,6 +550,20 @@ require('lazy').setup({
         -- But for many setups, the LSP (`tsserver`) will work just fine
         -- tsserver = {},
         --
+        -- for nix
+        nil_ls = {
+          --   autostart = true,
+          --   capabilities = caps,
+          --   cmd = { lsp_path },
+          --   settings = {
+          --     ['nil'] = {
+          --       testSetting = 42,
+          --       formatting = {
+          --         command = { 'nixpkgs-fmt' },
+          --       },
+          --     },
+          --   },
+        },
 
         lua_ls = {
           -- cmd = {...},

@@ -25,6 +25,8 @@
 
     pkgsUnstable.neovim
 
+    cargo
+
     # better du alternative
     du-dust # better du
     ripgrep # better grep
