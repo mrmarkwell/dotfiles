@@ -12,7 +12,7 @@
     ./modules/git.nix
     ./modules/tmux.nix
     ./modules/fish.nix
-    #    ./modules/neovim.nix
+    ./modules/neovim.nix
     #    ./modules/ssh.nix
   ];
 
