@@ -27,6 +27,8 @@
 
     cargo
 
+    nixpkgs-fmt
+
     # better du alternative
     du-dust # better du
     ripgrep # better grep
