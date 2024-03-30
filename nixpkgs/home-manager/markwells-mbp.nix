@@ -5,18 +5,18 @@
 { config, lib, pkgs, ... }:
 
 {
-# If you want to control things directly with nix, they should be imported here.
+  # If you want to control things directly with nix, they should be imported here.
   imports = [
     ./modules/home-manager.nix
     ./modules/common.nix
     ./modules/git.nix
     ./modules/tmux.nix
     ./modules/fish.nix
-#    ./modules/neovim.nix
-#    ./modules/ssh.nix
+    #    ./modules/neovim.nix
+    #    ./modules/ssh.nix
   ];
 
-# If you just want nix to copy dotfiles into the right spots, this is how to manage that.
+  # If you just want nix to copy dotfiles into the right spots, this is how to manage that.
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
   # plain files is through 'home.file'.

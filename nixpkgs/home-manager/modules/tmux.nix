@@ -1,9 +1,9 @@
 { config, pkgs, lib, libs, ... }:
 {
   home.packages = with pkgs; [
-# Needed for nifty status line stuff below.
-tmux-mem-cpu-load
-];
+    # Needed for nifty status line stuff below.
+    tmux-mem-cpu-load
+  ];
   programs.tmux = {
     enable = true;
     clock24 = true;
@@ -12,10 +12,10 @@ tmux-mem-cpu-load
     historyLimit = 100000;
     plugins = with pkgs;
       [
-          # Add plugins here.
+        # Add plugins here.
       ];
     extraConfig = ''
-${lib.fileContents ./tmux.conf}
-'';
-};
+      ${lib.fileContents ./tmux.conf}
+    '';
+  };
 }

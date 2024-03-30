@@ -15,34 +15,34 @@
   };
 
   outputs = inputs: {
-      homeConfigurations = {
-        # Activate with `home-manager switch --flake .#markwells-mbp`
-        markwells-mbp = inputs.home-manager.lib.homeManagerConfiguration {
-          pkgs = inputs.nixpkgs.legacyPackages.x86_64-darwin;
-          modules = [ ./home-manager/markwells-mbp.nix ];
-          extraSpecialArgs = { pkgsUnstable = inputs.nixpkgsUnstable.legacyPackages.x86_64-darwin; };
-        };
+    homeConfigurations = {
+      # Activate with `home-manager switch --flake .#markwells-mbp`
+      markwells-mbp = inputs.home-manager.lib.homeManagerConfiguration {
+        pkgs = inputs.nixpkgs.legacyPackages.x86_64-darwin;
+        modules = [ ./home-manager/markwells-mbp.nix ];
+        extraSpecialArgs = { pkgsUnstable = inputs.nixpkgsUnstable.legacyPackages.x86_64-darwin; };
+      };
 
-#      darwinConfigurations = {
-#        # nix build .#darwinConfigurations.markwells-mbp.system
-#        # ./result/sw/bin/darwin-rebuild switch --flake .
-#        # also requires running `chsh -s /run/current-system/sw/bin/fish` once
-#        markwells-mbp = darwin.lib.darwinSystem {
-#          system = "x86_64-darwin";
-#          modules = [
-#            ./darwin/markwells-mbp/configuration.nix
-#            home-manager.darwinModules.home-manager
-#            {
-#              home-manager.useGlobalPkgs = true;
-#              home-manager.useUserPackages = true;
-#              home-manager.users.markwell = import ./home-manager/markwells-mbp.nix;
-#              home-manager.extraSpecialArgs = { inherit nixpkgs; pkgsUnstable = inputs.nixpkgsUnstable.legacyPackages.x86_64-darwin; };
-#            }
-#          ];
-#          inputs = { inherit darwin nixpkgs; };
-#        };
-#      };
-};
-};
+      #      darwinConfigurations = {
+      #        # nix build .#darwinConfigurations.markwells-mbp.system
+      #        # ./result/sw/bin/darwin-rebuild switch --flake .
+      #        # also requires running `chsh -s /run/current-system/sw/bin/fish` once
+      #        markwells-mbp = darwin.lib.darwinSystem {
+      #          system = "x86_64-darwin";
+      #          modules = [
+      #            ./darwin/markwells-mbp/configuration.nix
+      #            home-manager.darwinModules.home-manager
+      #            {
+      #              home-manager.useGlobalPkgs = true;
+      #              home-manager.useUserPackages = true;
+      #              home-manager.users.markwell = import ./home-manager/markwells-mbp.nix;
+      #              home-manager.extraSpecialArgs = { inherit nixpkgs; pkgsUnstable = inputs.nixpkgsUnstable.legacyPackages.x86_64-darwin; };
+      #            }
+      #          ];
+      #          inputs = { inherit darwin nixpkgs; };
+      #        };
+      #      };
+    };
+  };
 }
 
