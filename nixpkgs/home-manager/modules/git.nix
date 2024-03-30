@@ -20,7 +20,7 @@
 
       push.autoSetupRemote = true;
 
-      core.editor = "vim";
+      core.editor = "nvim";
       core.fileMode = false;
       core.ignorecase = false;
     };
