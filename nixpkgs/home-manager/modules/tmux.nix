@@ -8,7 +8,7 @@
     enable = true;
     clock24 = true;
     shell = "${pkgs.fish}/bin/fish";
-    terminal = "tmux-256color";
+    terminal = "screen-256color";
     historyLimit = 100000;
     plugins = with pkgs;
       [

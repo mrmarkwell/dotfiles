@@ -32,6 +32,12 @@
     # Fonts
     nerdfonts
 
+    # TODO(markwell) figure out how to make this work - copyFonts takes too long
+    # otherwise.
+    #   nerdfonts.override
+    #   { fonts = [ "MesloLGS Nerd Font" ]; }
+    fontconfig
+
     # better du alternative
     du-dust # better du
     ripgrep # better grep
