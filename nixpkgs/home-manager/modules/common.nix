@@ -25,9 +25,12 @@
 
     pkgsUnstable.neovim
 
-    cargo
 
+    cargo
     nixpkgs-fmt
+
+    # Fonts
+    nerdfonts
 
     # better du alternative
     du-dust # better du
@@ -46,9 +49,12 @@
     libuuid # `uuidgen` (already pre-installed on mac)
   ];
 
+  fonts.fontconfig.enable = true;
+
   programs.dircolors = {
     enable = true;
   };
+
 
   #home.file = {
   # Building this configuration will create a copy of '' in
