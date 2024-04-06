@@ -75,6 +75,7 @@
       eb = "nvim ~/dotfiles/nixpkgs/home-manager/modules/fish.nix";
       em = "nvim ~/dotfiles/nixpkgs/home-manager/modules/";
       fnvim = "nvim (fzf)";
+      hms = "hm markwells-mbp"; # home-manager switch shortcut for my mac.
     };
   };
 }

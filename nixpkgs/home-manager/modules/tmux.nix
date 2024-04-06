@@ -24,7 +24,7 @@
         # Add plugins here.
       ];
     extraConfig = ''
-      ${lib.fileContents ./tmux.conf}
+      ${lib.fileContents ./tmux/tmux.conf}
     '';
   };
 }

@@ -13,7 +13,7 @@
     ./modules/tmux.nix
     ./modules/fish.nix
     ./modules/neovim.nix
-    #    ./modules/ssh.nix
+    ./modules/alacritty.nix
   ];
 
   # If you just want nix to copy dotfiles into the right spots, this is how to manage that.
