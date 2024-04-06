@@ -105,7 +105,10 @@ vim.opt.number = true
 -- vim.opt.relativenumber = true
 
 -- Enable mouse mode, can be useful for resizing splits for example!
-vim.opt.mouse = 'a'
+-- TODO: I'm disabling this because I hate the right click menu.
+-- Investigate how to enable the mouse without enabling right click
+-- maybe investigate `:help mousemodel`
+vim.opt.mouse = ''
 
 -- Don't show the mode, since it's already in the status line
 vim.opt.showmode = false
