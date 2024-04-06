@@ -30,7 +30,9 @@
     nixpkgs-fmt
 
     # Fonts
-    nerdfonts
+    # Available fonts are the keys here:
+    # https://github.com/NixOS/nixpkgs/blob/nixos-23.11/pkgs/data/fonts/nerdfonts/shas.nix
+    (nerdfonts.override { fonts = [ "Meslo" ]; })
 
     # TODO(markwell) figure out how to make this work - copyFonts takes too long
     # otherwise.

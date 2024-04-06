@@ -72,6 +72,9 @@
       "...." = "cd ../../..";
       "....." = "cd ../../../..";
       vim = "nvim";
+      eb = "nvim ~/dotfiles/nixpkgs/home-manager/modules/fish.nix";
+      em = "nvim ~/dotfiles/nixpkgs/home-manager/modules/";
+      fnvim = "nvim (fzf)";
     };
   };
 }
