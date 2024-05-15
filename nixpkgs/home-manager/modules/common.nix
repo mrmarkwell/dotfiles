@@ -20,6 +20,11 @@
     fortune-kind
     cowsay
 
+    # dev
+    bazel_7
+    clang-tools
+    nodejs_21
+
     # Unstable because we want a version that uses toml, not yaml.
     pkgsUnstable.alacritty
 
