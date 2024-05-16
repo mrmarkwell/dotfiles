@@ -13,7 +13,7 @@
     # TODO: Investigate why "sensible" plugin uses emacs and says it is strictly
     # better, even for vim users.
     keyMode = "vi"; # Use Vi keybindings.
-    mouse = false; # Let Alacritty handle the mouse.
+    mouse = true; # Hold 'Shift' to bypass tmux and let Alacritty handle the mouse.
     escapeTime = 0; # No delay when processing esc.
     newSession = true; # Auto start new session.
     prefix = "C-Space"; # Control space is leader for tmux.
