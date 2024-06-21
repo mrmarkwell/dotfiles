@@ -7,7 +7,18 @@ In particular, I like the single file approach since it simplifies where my conf
 
 This file is both the kickstart init file (modified with my own config), as well  as all the plugins that are not work-specific.
 
-There is another file, google.lua, that includes all the work-specific stuff that I can't check in to public github.
+SETUP:
+1. A symlink needs to be added to this folder in .config/ called `nvim`:
+
+```
+ln -s ~/path/to/this/folder/nvim-kickstart ~/.config/nvim
+```
+
+2. A symlink needs to be added to any google config in the google folder.
+
+```
+ln -s ~/path/to/some/google-specific/repo/google.lua ~/path/to/this/folder/nvim-kickstart/lua/google/google.lua
+```
 
 TODO:
 - Investigate snippets.
