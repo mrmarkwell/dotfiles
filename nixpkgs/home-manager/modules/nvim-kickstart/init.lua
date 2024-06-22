@@ -17,15 +17,18 @@ ln -s ~/path/to/this/folder/nvim-kickstart ~/.config/nvim
 2. A symlink needs to be added to any google config in the google folder.
 
 ```
-ln -s ~/path/to/some/google-specific/repo/google.lua ~/path/to/this/folder/nvim-kickstart/lua/google/google.lua
+ln -s ~/path/to/some/google-specific/repo/google.lua ./lua/google.lua
 ```
 
+My own todo list for this config.
 TODO:
 - Investigate snippets.
 - Add all my old config magic.
 
---]]
---[[
+Note:
+- Highlight a region and type 'gc' to convert it all into a comment.
+
+The original kickstart comment header starts here.
 
 =====================================================================
 ==================== READ THIS BEFORE CONTINUING ====================
@@ -110,7 +113,7 @@ I hope you enjoy your Neovim journey,
 
 P.S. You can delete this when you're done too. It's your config now! :)
 --]]
--- markwell's keybinds:
+-- NOTE: markwell's settings:
 vim.opt.nu = true
 vim.opt.relativenumber = true
 
@@ -159,7 +162,11 @@ vim.g.loaded_tohtml = true
 --vim.g.loaded_tutor = true
 vim.g.loaded_zipPlugin = true
 
--- Ok, back to kickstart boilerplate...
+-- Don't autoinsert comments when adding new lines.
+vim.cmd 'autocmd BufEnter * set formatoptions-=cro'
+vim.cmd 'autocmd BufEnter * setlocal formatoptions-=cro'
+
+-- NOTE: markwell: Ok, back to kickstart boilerplate...
 
 -- Set <space> as the leader key
 -- See `:help mapleader`
@@ -237,9 +244,62 @@ vim.opt.scrolloff = 10
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
--- Set highlight on search, but clear on pressing <Esc> in normal mode
+-- NOTE: markwell's keymaps start
+
+vim.keymap.set('n', '<leader>gb', '<cmd>GitBlameToggle<cr>', { desc = 'Toggle Git Blame' })
+-- make it possible to move highighted lines with capital J and K
+vim.keymap.set('v', 'J', ":m '>+1<CR>gv=gv")
+vim.keymap.set('v', 'K', ":m '<-2<CR>gv=gv")
+
+-- Make joining lines not move the cursor.
+vim.keymap.set('n', 'J', 'mzJ`z')
+vim.keymap.set('n', '<C-d>', '<C-d>zz')
+vim.keymap.set('n', '<C-u>', '<C-u>zz')
+vim.keymap.set('n', 'n', 'nzzzv')
+vim.keymap.set('n', 'N', 'Nzzzv')
+
+-- Close buffer without closing
+vim.keymap.set('n', '<leader>q', '<cmd>bp|bd #<CR>', { desc = 'Close current buffer' })
+
+-- <leader>y yanks to system clipboard instead of just to vim.
+vim.keymap.set('n', '<leader>y', '"+y', { desc = 'Yank to system clipboard' })
+vim.keymap.set('v', '<leader>y', '"+y', { desc = 'Yank to system clipboard' })
+vim.keymap.set('n', '<leader>Y', '"+Y', { desc = 'Yank to system clipboard' })
+
+-- Disable chronological history (I open this accidentally all the time)
+-- TODO: This doesn't work...
+vim.keymap.set('n', 'q:', '<nop>')
+
+-- Aliases for fat-fingering
+vim.api.nvim_create_user_command('WQ', 'wq', {})
+vim.api.nvim_create_user_command('Wq', 'wq', {})
+vim.api.nvim_create_user_command('W', 'w', {})
+vim.api.nvim_create_user_command('Qa', 'qa', {})
+vim.api.nvim_create_user_command('Q', 'q', {})
+
+-- Quick fix list navigation
+vim.keymap.set('n', '<C-k>', '<cmd>cnext<CR>zz')
+vim.keymap.set('n', '<C-j>', '<cmd>cprev<CR>zz')
+vim.keymap.set('n', '<leader>k', '<cmd>lnext<CR>zz')
+vim.keymap.set('n', '<leader>j', '<cmd>lprev<CR>zz')
+
+-- "replace word"
+vim.keymap.set('n', '<leader>rw', 'ciw<C-R>0', { desc = 'Replace the word under cursor with previous yank' })
+
+-- start a find-replace for the token under the cursor in the current file
+-- TODO: What should this mapping be?
+vim.keymap.set('n', '<leader>rn', [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]], { desc = 'Rename the word under the cursor' })
+
+-- Set highlight on search, but clear on pressing <Esc> in normal mode. Also dismiss notify messages with esc.
 vim.opt.hlsearch = true
-vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
+vim.keymap.set(
+  'n',
+  '<esc>',
+  "<esc>:noh<CR>:lua require('notify').dismiss()<CR>",
+  { desc = 'Dismiss highlights and notify messages silently when hitting <esc> in normal mode.', silent = true }
+)
+
+-- NOTE: markwell's keymaps end (kickstart keymaps below).
 
 -- Diagnostic keymaps
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous [D]iagnostic message' })
@@ -292,6 +352,243 @@ if not vim.loop.fs_stat(lazypath) then
   vim.fn.system { 'git', 'clone', '--filter=blob:none', '--branch=stable', lazyrepo, lazypath }
 end ---@diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)
+
+-- NOTE: markwell functions start
+
+-- Big keyboards have backtick where my escape key is on my little keyboard.
+-- Run this with `:lua TildeMapToEsc()`.
+-- WARN: I shouldn't need to use this.... just get used to using a bigger keyboard.
+function TildeMapToEsc()
+  vim.keymap.set('n', '`', '<esc>')
+  vim.keymap.set('v', '`', '<esc>')
+  vim.keymap.set('i', '`', '<esc>')
+end
+
+local find_dotfiles = function()
+  require('telescope.builtin').find_files {
+    prompt_title = 'Find in Dotfiles',
+    cwd = vim.fn.stdpath 'config',
+    follow = true,
+  }
+end
+
+local find_files = function()
+  require('telescope.builtin').find_files {
+    prompt_title = 'Find in Directory',
+    hidden = true,
+  }
+end
+
+local find_history = function()
+  require('telescope.builtin').oldfiles {
+    prompt_title = 'Find in History',
+  }
+end
+
+-- Searches for the name of the current file in the file |filename|.
+local find_current_filename_in_file = function(filename)
+  local lines = vim.fn.readfile(filename)
+  local current_filename = vim.fn.expand '%:t'
+  for linenum, line in ipairs(lines) do
+    if string.match(line, current_filename) then
+      return linenum
+    end
+  end
+  return 0
+end
+
+local grep_buffer = function()
+  require('telescope.builtin').current_buffer_fuzzy_find {
+    prompt_title = 'grep Buffer',
+  }
+end
+
+local grep_dir = function()
+  require('telescope.builtin').live_grep {
+    prompt_title = 'grep Directory',
+  }
+end
+
+local grep_dotfiles = function()
+  require('telescope.builtin').live_grep {
+    prompt_title = 'grep Dotfiles',
+    cwd = vim.fn.stdpath 'config',
+    vimgrep_arguments = {
+      'rg',
+      '--color=never',
+      '--no-heading',
+      '--with-filename',
+      '--line-number',
+      '--column',
+      '--smart-case',
+      '--follow',
+    },
+  }
+end
+
+local grep_help = function()
+  require('telescope.builtin').help_tags {
+    prompt_title = 'grep Help Tags',
+  }
+end
+
+local grep_nvim_help = function()
+  require('telescope.builtin').live_grep {
+    prompt_title = 'grep NVIM help',
+    search_dirs = { '~/nvimhelp.txt' },
+  }
+end
+
+local grep_all_open_buffers = function()
+  require('telescope.builtin').live_grep {
+    grep_open_files = true,
+    prompt_title = 'grep all open buffers',
+  }
+end
+
+-- Returns a table of files related to the current file (e.g. BUILD, tests,
+-- etc.). Each entry in the table is a table containing the name of the related
+-- file and the relevant line number.
+local get_related_files = function()
+  local related_files = {}
+  local current_dir = vim.fn.expand '%:h'
+  local current_filename = vim.fn.expand '%'
+  local files_to_find = {
+    -- BUILD file.
+    current_dir .. '/BUILD',
+    -- Source files.
+    string.gsub(current_filename, '_test%.(%w+)', '.%1'),
+    string.gsub(current_filename, '_tests%.(%w+)', '.%1'),
+    -- Test files.
+    string.gsub(current_filename, '%.(%w+)', '_test.%1'),
+    string.gsub(current_filename, '%.(%w+)', '_tests.%1'),
+  }
+  for _, filename in ipairs(files_to_find) do
+    if filename ~= current_filename and vim.fn.filereadable(filename) == 1 then
+      local cwd = vim.fn.getcwd() .. '/'
+      local relative_filename = string.gsub(filename, cwd, '')
+      -- In BUILD files, search for current file's BUILD rule to jump to that
+      -- line directly.
+      local lnum = 0
+      if string.find(filename, 'BUILD') ~= nil then
+        lnum = find_current_filename_in_file(filename)
+      end
+      table.insert(related_files, {
+        filename = relative_filename,
+        lnum = lnum,
+      })
+    end
+  end
+  return related_files
+end
+
+local find_related = function()
+  local action_state = require 'telescope.actions.state'
+  local action_set = require 'telescope.actions.set'
+  local config = require('telescope.config').values
+  local finders = require 'telescope.finders'
+  local pickers = require 'telescope.pickers'
+  local opts = {}
+  pickers
+    .new(opts, {
+      prompt_title = 'Find in Related Files',
+      previewer = config.grep_previewer(opts),
+      sorter = config.generic_sorter(opts),
+      finder = finders.new_table {
+        results = get_related_files(),
+        entry_maker = function(entry)
+          return {
+            value = entry.filename,
+            ordinal = entry.filename,
+            display = entry.filename,
+            lnum = entry.lnum,
+          }
+        end,
+      },
+      attach_mappings = function()
+        action_set.select:enhance {
+          post = function()
+            local selection = action_state.get_selected_entry()
+            if selection.lnum ~= 0 then
+              vim.api.nvim_win_set_cursor(0, { selection.lnum, 0 })
+            end
+          end,
+        }
+        return true
+      end,
+    })
+    :find()
+end
+
+-- Helper function for a scoped grep search with telescope.
+_G.live_grep = function(search_dirs, prompt_title, follow, hidden)
+  prompt_title = prompt_title or 'Find Files'
+  -- repeat an existing flag if false.
+  local follow_flag = (follow and '--follow' or '--column')
+  local hidden_flag = (hidden and '--hidden' or '--column')
+  require('telescope.builtin').live_grep {
+    prompt_title = prompt_title,
+    search_dirs = search_dirs,
+    vimgrep_arguments = {
+      'rg',
+      '--color=never',
+      '--no-heading',
+      '--with-filename',
+      '--line-number',
+      '--column',
+      '--smart-case',
+      follow_flag,
+      hidden_flag,
+    },
+  }
+end
+
+-- Helper function for a scoped file search with telescope.
+_G.find_files = function(search_dirs, prompt_title, follow, hidden)
+  prompt_title = prompt_title or 'Find Files'
+  -- repeat an existing flag if false.
+  local follow_flag = (follow and '--follow' or '--files')
+  local hidden_flag = (hidden and '--hidden' or '--files')
+  require('telescope.builtin').find_files {
+    prompt_title = prompt_title,
+    search_dirs = search_dirs,
+    find_command = {
+      'rg',
+      '--files',
+      '-g',
+      '!.git',
+      follow_flag,
+      hidden_flag,
+    },
+  }
+end
+
+-- Shortcut for creating telescope keymaps.
+-- Usage:
+--    -- This would create two keymaps: <leader>fx and <leader>sx.
+--    -- 'f' mappings call find_files on the provided paths, with the provided titles.
+--    -- 's' mappings do the same but with live_grep.
+--    map_search_shortcuts(
+--       "x",
+--       { "~/.config/nvim/", "~/.config/fish/" },
+--       "Configs",
+--       true, -- optional 'follow'
+--       true,  -- optional 'hidden'
+--       )
+_G.map_search_shortcuts = function(map_letter, search_dirs, prompt, follow, hidden)
+  local find_mapping = '<leader>f' .. map_letter
+  local grep_mapping = '<leader>s' .. map_letter
+  local find_prompt = 'Find ' .. prompt
+  local grep_prompt = 'Grep ' .. prompt
+  vim.keymap.set('n', find_mapping, function()
+    find_files(search_dirs, find_prompt, follow, hidden)
+  end, { desc = find_prompt })
+  vim.keymap.set('n', grep_mapping, function()
+    live_grep(search_dirs, grep_prompt, follow, hidden)
+  end, { desc = grep_prompt })
+end
+
+-- NOTE: end my functions.
 
 -- [[ Configure and install plugins ]]
 --
@@ -386,6 +683,8 @@ require('lazy').setup({
     branch = '0.1.x',
     dependencies = {
       'nvim-lua/plenary.nvim',
+      'nvim-treesitter/nvim-treesitter',
+      'nvim-telescope/telescope-live-grep-args.nvim',
       {
         -- If encountering errors, see telescope-fzf-native README for installation instructions
         'nvim-telescope/telescope-fzf-native.nvim',
@@ -403,6 +702,7 @@ require('lazy').setup({
       -- Useful for getting pretty icons, but requires a Nerd Font.
       { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
     },
+    cmd = 'Telescope',
     config = function()
       -- Telescope is a fuzzy finder that comes with a lot of different things that
       -- it can fuzzy find! It's more than just a "file finder", it can search
@@ -426,15 +726,60 @@ require('lazy').setup({
       -- [[ Configure Telescope ]]
       -- See `:help telescope` and `:help telescope.setup()`
       require('telescope').setup {
-        -- You can put your default mappings / updates / etc. in here
-        --  All the info you're looking for is in `:help telescope.setup()`
-        --
-        -- defaults = {
-        --   mappings = {
-        --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
-        --   },
-        -- },
-        -- pickers = {}
+        defaults = {
+          file_ignore_patterns = {
+            -- See: https://www.lua.org/manual/5.1/manual.html#5.4.1 for more
+            -- information about lua regex.
+            '%.git/',
+            '%.orig',
+          },
+          -- The vertical layout strategy is good to handle long paths like those in
+          -- google3 repos because you have nearly the full screen to display a file path.
+          -- The caveat is that the preview area is smaller.
+          layout_strategy = 'vertical',
+          layout_config = {
+            prompt_position = 'bottom',
+            vertical = { height = 0.95, width = 0.95 },
+            horizontal = { height = 0.95, width = 0.95 },
+          },
+          -- Common paths in google3 repos are collapsed following the example of Cider
+          -- It is nice to keep this as a user config rather than part of
+          -- telescope-codesearch because it can be reused by other telescope pickers.
+          path_display = function(opts, path)
+            -- Do common substitutions
+            path = path:gsub('^/google/src/cloud/[^/]+/[^/]+/google3/', '~/google3/', 1)
+            path = path:gsub('^/google/src/cloud/[^/]+/[^/]+/google3/', '~/google3/', 1)
+            path = path:gsub('^/usr/local/google/home/markwell/android/', '~/android/', 1)
+            path = path:gsub('^/usr/local/google/home/markwell/aoc/', '~/aoc/', 1)
+            path = path:gsub('^/usr/local/google/home/markwell/', '~/', 1)
+            path = path:gsub('^~/repos/aoc/', '~/aoc/', 1)
+            path = path:gsub('^~/repos/master/', '~/android/', 1)
+
+            -- Do truncation. This allows us to combine our custom display formatter
+            -- with the built-in truncation.
+            -- `truncate` handler in transform_path memoizes computed truncation length in opts.__length.
+            -- Here we are manually propagating this value between new_opts and opts.
+            -- We can make this cleaner and more complicated using metatables :)
+            local new_opts = {
+              path_display = {
+                truncate = 3,
+              },
+              __length = opts.__length,
+            }
+            path = require('telescope.utils').transform_path(new_opts, path)
+            opts.__length = new_opts.__length
+            return path
+          end,
+          mappings = {
+            n = {
+              p = require('telescope.actions.layout').toggle_preview,
+            },
+          },
+          sorting_strategy = 'ascending',
+        },
+        pickers = {
+          lsp_code_actions = { theme = 'cursor' },
+        },
         extensions = {
           ['ui-select'] = {
             require('telescope.themes').get_dropdown(),
@@ -443,14 +788,17 @@ require('lazy').setup({
       }
 
       -- Enable Telescope extensions if they are installed
-      pcall(require('telescope').load_extension, 'fzf')
-      pcall(require('telescope').load_extension, 'ui-select')
+      require('telescope').load_extension 'fzf'
+      require('telescope').load_extension 'ui-select'
+      require('telescope').load_extension 'live_grep_args'
 
       -- See `:help telescope.builtin`
       local builtin = require 'telescope.builtin'
+
+      -- TODO: These are not how I want them! take some time to fix them.
       vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
       vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
-      vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
+      vim.keymap.set('n', '<leader>sd', builtin.find_files, { desc = '[F]ind in open [Files]' })
       vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
       vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
       vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
@@ -458,6 +806,21 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
       vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
       vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
+
+      vim.keymap.set('n', '<leader>dd', '<Cmd>Telescope diagnostics<CR>', { desc = 'Open buffer diagnostics' })
+      vim.keymap.set('n', '<leader>sf', grep_buffer, { desc = 'grep buffer' })
+      vim.keymap.set('n', '<leader>sb', grep_all_open_buffers, { desc = 'grep all open buffers' })
+      vim.keymap.set('n', '<leader>sh', grep_help, { desc = 'grep help tags' })
+      vim.keymap.set('n', '<leader>sn', grep_nvim_help, { desc = 'grep nvim help' })
+      vim.keymap.set('n', '<leader>sp', grep_dir, { desc = 'grep directory' })
+      vim.keymap.set('n', '<leader>st', '<Cmd>Telescope treesitter<CR>', { desc = 'grep treesitter' })
+      vim.keymap.set('n', '<leader>sk', '<Cmd>Telescope keymaps<CR>', { desc = 'grep keymaps' })
+      -- { "<leader>sd", require("markwell.grep").grep_dotfiles,         desc = "grep dotfiles" },
+      -- { "<leader>fd", require("markwell.find").find_dotfiles, desc = "Open from dotfiles", },
+      vim.keymap.set('n', '<leader>fh', find_history, { desc = 'Open from history' })
+      vim.keymap.set('n', '<leader>fp', find_files, { desc = 'Open from directory' })
+      vim.keymap.set('n', '<leader>fr', find_related, { desc = 'Open from related files' })
+      vim.keymap.set('n', '<leader>rr', '<Cmd>Telescope resume<CR>', { desc = 'Resume Telescope picker' })
 
       -- Slightly advanced example of overriding default behavior and theme
       vim.keymap.set('n', '<leader>/', function()
@@ -483,7 +846,6 @@ require('lazy').setup({
       end, { desc = '[S]earch [N]eovim files' })
     end,
   },
-
   {
     -- LSP Configuration & Plugins
     'neovim/nvim-lspconfig',
@@ -703,7 +1065,6 @@ require('lazy').setup({
       }
     end,
   },
-
   {
     -- Autoformat
     'stevearc/conform.nvim',
@@ -732,11 +1093,11 @@ require('lazy').setup({
       },
     },
   },
-
   {
     -- Autocompletion
     'hrsh7th/nvim-cmp',
-    event = 'InsertEnter',
+    -- We need CmdlineEnter as well since we want completions when we start typing a command (e.g. ':') even if we haven't entered insert mode yet.
+    event = { 'InsertEnter', 'CmdlineEnter' },
     dependencies = {
       -- Snippet Engine & its associated nvim-cmp source
       {
@@ -754,21 +1115,26 @@ require('lazy').setup({
           -- `friendly-snippets` contains a variety of premade snippets.
           --    See the README about individual language/framework/plugin snippets:
           --    https://github.com/rafamadriz/friendly-snippets
-          -- {
-          --   'rafamadriz/friendly-snippets',
-          --   config = function()
-          --     require('luasnip.loaders.from_vscode').lazy_load()
-          --   end,
-          -- },
+          {
+            'rafamadriz/friendly-snippets',
+            config = function()
+              require('luasnip.loaders.from_vscode').lazy_load()
+            end,
+          },
         },
       },
       'saadparwaiz1/cmp_luasnip',
+      'onsails/lspkind.nvim',
 
       -- Adds other completion capabilities.
       --  nvim-cmp does not ship with all sources by default. They are split
       --  into multiple repos for maintenance purposes.
       'hrsh7th/cmp-nvim-lsp',
       'hrsh7th/cmp-path',
+      'hrsh7th/cmp-buffer',
+      'hrsh7th/cmp-cmdline',
+      'hrsh7th/cmp-nvim-lua',
+      'hrsh7th/cmp-nvim-lsp-signature-help',
     },
     config = function()
       -- See `:help cmp`
@@ -794,14 +1160,36 @@ require('lazy').setup({
           -- Select the [p]revious item
           ['<C-p>'] = cmp.mapping.select_prev_item(),
 
-          -- Scroll the documentation window [b]ack / [f]orward
-          ['<C-b>'] = cmp.mapping.scroll_docs(-4),
-          ['<C-f>'] = cmp.mapping.scroll_docs(4),
+          -- Scroll the documentation window [u]p / [d]own
+          ['<C-u>'] = cmp.mapping.scroll_docs(-4),
+          ['<C-d>'] = cmp.mapping.scroll_docs(4),
 
           -- Accept ([y]es) the completion.
           --  This will auto-import if your LSP supports it.
           --  This will expand snippets if the LSP sent a snippet.
           ['<C-y>'] = cmp.mapping.confirm { select = true },
+          -- Also allow C-f to match the behavior of Fish.
+          ['<C-f>'] = cmp.mapping.confirm { select = true },
+
+          -- TJ doesn't like this, but I enjoy using tab to scroll through completion options.
+          ['<Tab>'] = cmp.mapping(function(fallback)
+            if cmp.visible() then
+              cmp.select_next_item()
+            elseif luasnip.expand_or_jumpable() then
+              luasnip.expand_or_jump()
+            else
+              fallback()
+            end
+          end, { 'i', 's' }),
+          ['<S-Tab>'] = cmp.mapping(function(fallback)
+            if cmp.visible() then
+              cmp.select_prev_item()
+            elseif luasnip.jumpable(-1) then
+              luasnip.jump(-1)
+            else
+              fallback()
+            end
+          end, { 'i', 's' }),
 
           -- Manually trigger a completion from nvim-cmp.
           --  Generally you don't need this, because nvim-cmp will display
@@ -831,11 +1219,78 @@ require('lazy').setup({
           --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
         },
         sources = {
+          -- Order matters here. Prioritize the useful stuff!
+          { name = 'nvim_lsp_signature_help' },
           { name = 'nvim_lsp' },
           { name = 'luasnip' },
+          { name = 'nvim_lua' },
           { name = 'path' },
+          -- We don't want a lot of suggestions from the current buffer.
+          { name = 'buffer', max_item_count = 3 },
+        },
+        -- TODO: I'm not sure this is helping/necessary.
+        sorting = {
+          comparators = {}, -- We stop all sorting to let the lsp do the sorting
+          priority_weight = 1,
+        },
+        -- Disable inside comments. Autocomplete in comments is super annoying!
+        enabled = function()
+          if require('cmp.config.context').in_treesitter_capture 'comment' == true or require('cmp.config.context').in_syntax_group 'Comment' then
+            return false
+          else
+            return true
+          end
+        end,
+        -- TODO: I'm not sure this is necessary.
+        formatting = {
+          expandable_indicator = true,
+          fields = { 'kind', 'abbr', 'menu' },
+          format = require('lspkind').cmp_format {
+            mode = 'symbol_text',
+            maxwidth = 50,
+            ellipsis_char = '...',
+            before = function(entry, vim_item)
+              --pcall(function()
+              local item = entry:get_completion_item()
+              -- Label where the info came from.
+              local menu = {
+                buffer = '[buffer]',
+                nvim_lsp = '[LSP]',
+                nvim_lua = '[API]',
+                path = '[path]',
+                luasnip = '[snip]',
+                vim_vsnip = '[snip]',
+                nvim_ciderlsp = '(🤖)',
+              }
+              vim_item.menu = menu[entry.source.name]
+
+              -- If there is a small-ish amount of detail, just add it to the end
+              -- of the table. This is usually the return type or the field type.
+              if item.detail and #item.detail < 30 then
+                vim_item.menu = vim_item.menu .. ' (' .. item.detail .. ')'
+              end
+              --end)
+              return vim_item
+            end,
+          },
         },
       }
+
+      -- Completion suggestions for execution commands.
+      cmp.setup.cmdline(':', {
+        mapping = cmp.mapping.preset.cmdline(),
+        sources = {
+          { name = 'cmdline', max_item_count = 10 },
+        },
+      })
+
+      -- Completion suggestions for searches.
+      cmp.setup.cmdline('/', {
+        mapping = cmp.mapping.preset.cmdline(),
+        sources = {
+          { name = 'buffer', max_item_count = 10 },
+        },
+      })
     end,
   },
 
@@ -928,26 +1383,6 @@ require('lazy').setup({
       --    - Show your current context: https://github.com/nvim-treesitter/nvim-treesitter-context
       --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
     end,
-  },
-}, {
-  ui = {
-    -- If you are using a Nerd Font: set icons to an empty table which will use the
-    -- default lazy.nvim defined Nerd Font icons, otherwise define a unicode icons table
-    icons = vim.g.have_nerd_font and {} or {
-      cmd = '⌘',
-      config = '🛠',
-      event = '📅',
-      ft = '📂',
-      init = '⚙',
-      keys = '🗝',
-      plugin = '🔌',
-      runtime = '💻',
-      require = '🌙',
-      source = '📄',
-      start = '🚀',
-      task = '📌',
-      lazy = '💤 ',
-    },
   },
   {
     -- debug.lua
@@ -1100,7 +1535,30 @@ require('lazy').setup({
       })
     end,
   },
-  -- markwell's plugins start here (stuff not included in kickstart)
+  -- NOTE: markwell's plugins start here (stuff not included in kickstart)
+  {
+    'tpope/vim-abolish',
+    cmd = { 'S', 'Subvert' },
+    keys = 'cr',
+    config = function()
+      -- Register mappings with WhichKey.
+      local loaded, wk = pcall(require, 'which-key')
+      if loaded then
+        wk.register {
+          ['cr'] = {
+            name = 'coerce',
+            ['<Space>'] = 'to space case',
+            ['.'] = 'to.dot.case',
+            ['-'] = 'to-dash-case',
+            c = 'toCamelCase',
+            m = 'ToMixedCase',
+            s = 'to_snake_case',
+            u = 'TO_UPPER_SNAKE_CASE',
+          },
+        }
+      end
+    end,
+  },
   {
     -- Netrw replacement.
     'stevearc/oil.nvim',
@@ -1113,7 +1571,7 @@ require('lazy').setup({
   },
   {
     'akinsho/bufferline.nvim',
-    dependencies = { 'kyazdani42/nvim-web-devicons' },
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
     opts = {
       options = {
         custom_filter = function(buf_number)
@@ -1161,10 +1619,45 @@ require('lazy').setup({
       vim.keymap.set('n', '<Leader><Right>', '<Cmd>BufferLineMoveNext<CR>', { desc = 'Move buffer right' })
     end,
   },
+  {
+    'f-person/git-blame.nvim',
+    event = 'VeryLazy',
+    config = function()
+      require('gitblame').setup {
+        --Note how the `gitblame_` prefix is omitted in `setup`
+        enabled = true,
+        highlight_group = 'Comment',
+        virtual_text_column = 80,
+        date_format = '%r',
+        message_template = '        <author> • <date> • <summary>',
+        message_when_not_committed = '        Not committed yet...',
+      }
+    end,
+  },
+  -- Import all the google plugins. Symlink a 'google.lua' into the lua folder.
+  -- It can be empty for non-google configs.
+  { import = 'google' },
+}, {
+  ui = {
+    -- If you are using a Nerd Font: set icons to an empty table which will use the
+    -- default lazy.nvim defined Nerd Font icons, otherwise define a unicode icons table
+    icons = vim.g.have_nerd_font and {} or {
+      cmd = '⌘',
+      config = '🛠',
+      event = '📅',
+      ft = '📂',
+      init = '⚙',
+      keys = '🗝',
+      plugin = '🔌',
+      runtime = '💻',
+      require = '🌙',
+      source = '📄',
+      start = '🚀',
+      task = '📌',
+      lazy = '💤 ',
+    },
+  },
 })
-
--- work-specific magic.
-require 'google'
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
