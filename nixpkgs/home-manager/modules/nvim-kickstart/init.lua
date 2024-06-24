@@ -286,10 +286,6 @@ vim.keymap.set('n', '<leader>j', '<cmd>lprev<CR>zz')
 -- "replace word"
 vim.keymap.set('n', '<leader>rw', 'ciw<C-R>0', { desc = 'Replace the word under cursor with previous yank' })
 
--- start a find-replace for the token under the cursor in the current file
--- TODO: What should this mapping be?
-vim.keymap.set('n', '<leader>rn', [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]], { desc = 'Rename the word under the cursor' })
-
 -- Set highlight on search, but clear on pressing <Esc> in normal mode. Also dismiss notify messages with esc.
 vim.opt.hlsearch = true
 vim.keymap.set(
@@ -588,6 +584,17 @@ _G.map_search_shortcuts = function(map_letter, search_dirs, prompt, follow, hidd
   end, { desc = grep_prompt })
 end
 
+vim.g.themeindex = 0
+function RotateColorscheme()
+  local colorstring = { 'tokyonight-moon', 'tokyonight-night', 'tokyonight-storm', 'zenburn', 'vscode', 'gruvbox' }
+  vim.g.themeindex = ((vim.g.themeindex + 1) % #colorstring)
+  local theme = colorstring[vim.g.themeindex + 1]
+  vim.cmd.colorscheme(theme)
+  --vim.api.nvim_echo({{':colorscheme ' .. theme}}, false, {})
+end
+
+vim.keymap.set('n', '<F8>', RotateColorscheme)
+
 -- NOTE: end my functions.
 
 -- [[ Configure and install plugins ]]
@@ -659,6 +666,7 @@ require('lazy').setup({
       require('which-key').setup()
 
       -- Document existing key chains
+      -- TODO: Make sure all my key chains are labelled, and follow the pattern below.
       require('which-key').register {
         ['<leader>c'] = { name = '[C]ode', _ = 'which_key_ignore' },
         ['<leader>d'] = { name = '[D]ocument', _ = 'which_key_ignore' },
@@ -725,6 +733,9 @@ require('lazy').setup({
 
       -- [[ Configure Telescope ]]
       -- See `:help telescope` and `:help telescope.setup()`
+      -- TODO: Telescope is not looking good. I preferred the way it worked before.
+      -- Also, my custom telescope search paths aren't working either.
+      -- Investigate...
       require('telescope').setup {
         defaults = {
           file_ignore_patterns = {
@@ -983,7 +994,19 @@ require('lazy').setup({
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
-        clangd = {},
+        clangd = {
+          autostart = true,
+          cmd = {
+            'clangd',
+            -- Do everything in-memory for performance.
+            '--pch-storage=memory',
+            -- Use 20 threads
+            '-j=20',
+            '--header-insertion=iwyu',
+            '--clang-tidy',
+            '--fallback-style=Google',
+          },
+        },
         -- gopls = {},
         -- pyright = {},
         -- rust_analyzer = {},
@@ -1021,7 +1044,7 @@ require('lazy').setup({
                 callSnippet = 'Replace',
               },
               -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
-              -- diagnostics = { disable = { 'missing-fields' } },
+              diagnostics = { disable = { 'missing-fields' } },
             },
           },
         },
@@ -1312,7 +1335,27 @@ require('lazy').setup({
       vim.cmd.hi 'Comment gui=none'
     end,
   },
-
+  -- Other colorschemes.
+  {
+    'phha/zenburn.nvim',
+    lazy = true,
+  },
+  {
+    'mofiqul/vscode.nvim',
+    lazy = true,
+  },
+  {
+    'morhetz/gruvbox',
+    lazy = true,
+    config = function()
+      vim.g.gruvbox_contrast_dark = 'hard'
+      vim.g.gruvbox_invert_selection = false
+      vim.g.gruvbox_sign_column = 'bg0'
+    end,
+  },
+  {
+    'rcarriga/nvim-notify',
+  },
   -- Highlight todo, notes, etc in comments
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
   {
@@ -1537,6 +1580,15 @@ require('lazy').setup({
   },
   -- NOTE: markwell's plugins start here (stuff not included in kickstart)
   {
+    -- Toggle formatted markdown view with :RenderMarkdownToggle
+    'MeanderingProgrammer/markdown.nvim',
+    name = 'render-markdown', -- Only needed if you have another plugin named markdown.nvim
+    dependencies = { 'nvim-treesitter/nvim-treesitter' },
+    config = function()
+      require('render-markdown').setup {}
+    end,
+  },
+  {
     'tpope/vim-abolish',
     cmd = { 'S', 'Subvert' },
     keys = 'cr',
@@ -1633,6 +1685,44 @@ require('lazy').setup({
         message_when_not_committed = '        Not committed yet...',
       }
     end,
+  },
+  {
+    'folke/paint.nvim',
+    event = 'BufReadPre',
+    opts = {
+      highlights = {
+        {
+          filter = {},
+          pattern = 'DO_NOT_SUBMIT',
+          hl = 'ErrorMsg',
+        },
+        {
+          filter = {},
+          pattern = 'MARKWELL',
+          hl = 'Constant',
+        },
+        {
+          filter = { filetype = 'lua' },
+          -- TODO: Make sure this works
+          -- The goal is to highlight the word 'section' in lua comments.
+          pattern = '%-%-SECTION:',
+          hl = 'Constant',
+        },
+      },
+    },
+  },
+  -- Go to file in lua.
+  { 'sam4llis/nvim-lua-gf', ft = 'lua' },
+  {
+    'mbbill/undotree',
+    event = 'VeryLazy',
+    keys = {
+      {
+        '<leader>u',
+        vim.cmd.UndotreeToggle,
+        desc = 'Toggle Undotree',
+      },
+    },
   },
   -- Import all the google plugins. Symlink a 'google.lua' into the lua folder.
   -- It can be empty for non-google configs.
