@@ -23,10 +23,24 @@ ln -s ~/path/to/some/google-specific/repo/google.lua ./lua/google.lua
 My own todo list for this config.
 TODO:
 - Investigate snippets.
-- Add all my old config magic.
 
-Note:
-- Highlight a region and type 'gc' to convert it all into a comment.
+NOTE: Reminders of cool functionality.
+- Highlight a region and type 'gc' to toggle converting it into a comment.
+- :terminal opens a terminal in a buffer. 'i' to use it (terminal mode) and '<esc><esc>' to exit.
+- Telescope
+  - <leader>help to search [help]
+  - <leader>rr to reopen telescope (in whatever state it was last closed).
+  - <leader>sk to [S]earch [K]eymaps (useful if you forget a mapping!).
+  - <leader>/ to fuzzy search in current buffer.
+  - <leader>s/ to fuzzy search in all open buffers 
+  - <leader>fh to [F]ind in [H]istory
+  - <leader><leader>s{prefix} to [S]earch for the mapped prefix.
+  - <leader><leader>f{prefix} to [F]ind in the mapped prefix.
+- Diagnostics
+  - <leader>n and <leader>N to navigate diagnostic messages.
+  - <leader>e to show the full error/diagnosic message on the current line.
+  - <leader>l to open the quickfix list.
+- Use <ctrl>h, j, k, or l to switch between windows.
 
 The original kickstart comment header starts here.
 
@@ -93,7 +107,7 @@ Kickstart Guide:
     This should be the first place you go to look when you're stuck or confused
     with something. It's one of my favorite Neovim features.
 
-    MOST IMPORTANTLY, we provide a keymap "<space>sh" to [s]earch the [h]elp documentation,
+    MOST IMPORTANTLY, we provide a keymap "<space>help" to search the [help] documentation,
     which is very useful when you're not exactly sure of what you're looking for.
 
   I have left several `:help X` comments throughout the init.lua
@@ -159,7 +173,7 @@ vim.g.loaded_netrw = true
 vim.g.loaded_netrwPlugin = true
 vim.g.loaded_tarPlugin = true
 vim.g.loaded_tohtml = true
---vim.g.loaded_tutor = true
+vim.g.loaded_tutor = true
 vim.g.loaded_zipPlugin = true
 
 -- Don't autoinsert comments when adding new lines.
@@ -189,9 +203,6 @@ vim.opt.number = true
 -- vim.opt.relativenumber = true
 
 -- Enable mouse mode, can be useful for resizing splits for example!
--- TODO: I'm disabling this because I hate the right click menu.
--- Investigate how to enable the mouse without enabling right click
--- maybe investigate `:help mousemodel`
 vim.opt.mouse = ''
 
 -- Don't show the mode, since it's already in the status line
@@ -246,29 +257,23 @@ vim.opt.scrolloff = 10
 
 -- NOTE: markwell's keymaps start
 
-vim.keymap.set('n', '<leader>gb', '<cmd>GitBlameToggle<cr>', { desc = 'Toggle Git Blame' })
+vim.keymap.set('n', '<leader>gb', '<cmd>GitBlameToggle<cr>', { desc = 'Toggle [G]it [B]lame' })
+
 -- make it possible to move highighted lines with capital J and K
 vim.keymap.set('v', 'J', ":m '>+1<CR>gv=gv")
 vim.keymap.set('v', 'K', ":m '<-2<CR>gv=gv")
 
 -- Make joining lines not move the cursor.
 vim.keymap.set('n', 'J', 'mzJ`z')
+
+-- Paging down or going to the next search match centers cursor on the screen.
 vim.keymap.set('n', '<C-d>', '<C-d>zz')
 vim.keymap.set('n', '<C-u>', '<C-u>zz')
 vim.keymap.set('n', 'n', 'nzzzv')
 vim.keymap.set('n', 'N', 'Nzzzv')
 
--- Close buffer without closing
+-- Close buffer without closing window.
 vim.keymap.set('n', '<leader>q', '<cmd>bp|bd #<CR>', { desc = 'Close current buffer' })
-
--- <leader>y yanks to system clipboard instead of just to vim.
-vim.keymap.set('n', '<leader>y', '"+y', { desc = 'Yank to system clipboard' })
-vim.keymap.set('v', '<leader>y', '"+y', { desc = 'Yank to system clipboard' })
-vim.keymap.set('n', '<leader>Y', '"+Y', { desc = 'Yank to system clipboard' })
-
--- Disable chronological history (I open this accidentally all the time)
--- TODO: This doesn't work...
-vim.keymap.set('n', 'q:', '<nop>')
 
 -- Aliases for fat-fingering
 vim.api.nvim_create_user_command('WQ', 'wq', {})
@@ -277,14 +282,14 @@ vim.api.nvim_create_user_command('W', 'w', {})
 vim.api.nvim_create_user_command('Qa', 'qa', {})
 vim.api.nvim_create_user_command('Q', 'q', {})
 
--- Quick fix list navigation
+-- Quickfix list navigation
 vim.keymap.set('n', '<C-k>', '<cmd>cnext<CR>zz')
 vim.keymap.set('n', '<C-j>', '<cmd>cprev<CR>zz')
 vim.keymap.set('n', '<leader>k', '<cmd>lnext<CR>zz')
 vim.keymap.set('n', '<leader>j', '<cmd>lprev<CR>zz')
 
 -- "replace word"
-vim.keymap.set('n', '<leader>rw', 'ciw<C-R>0', { desc = 'Replace the word under cursor with previous yank' })
+vim.keymap.set('n', '<leader>rw', 'ciw<C-R>0<ESC>', { desc = '[R]eplace the [w]ord under cursor with previous yank' })
 
 -- Set highlight on search, but clear on pressing <Esc> in normal mode. Also dismiss notify messages with esc.
 vim.opt.hlsearch = true
@@ -298,10 +303,10 @@ vim.keymap.set(
 -- NOTE: markwell's keymaps end (kickstart keymaps below).
 
 -- Diagnostic keymaps
-vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous [D]iagnostic message' })
-vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagnostic message' })
+vim.keymap.set('n', '<leader>n', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic message' })
+vim.keymap.set('n', '<leader>N', vim.diagnostic.goto_prev, { desc = 'Go to previous diagnostic message' })
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
+vim.keymap.set('n', '<leader>l', vim.diagnostic.setloclist, { desc = 'Open diagnostic quickfix [L]ist' })
 
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
@@ -360,7 +365,7 @@ function TildeMapToEsc()
   vim.keymap.set('i', '`', '<esc>')
 end
 
-local find_dotfiles = function()
+local find_nvim_config = function()
   require('telescope.builtin').find_files {
     prompt_title = 'Find in Dotfiles',
     cwd = vim.fn.stdpath 'config',
@@ -368,7 +373,7 @@ local find_dotfiles = function()
   }
 end
 
-local find_files = function()
+local find_files_current_directory = function()
   require('telescope.builtin').find_files {
     prompt_title = 'Find in Directory',
     hidden = true,
@@ -393,21 +398,15 @@ local find_current_filename_in_file = function(filename)
   return 0
 end
 
-local grep_buffer = function()
-  require('telescope.builtin').current_buffer_fuzzy_find {
-    prompt_title = 'grep Buffer',
-  }
-end
-
 local grep_dir = function()
   require('telescope.builtin').live_grep {
     prompt_title = 'grep Directory',
   }
 end
 
-local grep_dotfiles = function()
+local grep_nvim_config = function()
   require('telescope.builtin').live_grep {
-    prompt_title = 'grep Dotfiles',
+    prompt_title = '[S]earch [N]vim Config',
     cwd = vim.fn.stdpath 'config',
     vimgrep_arguments = {
       'rg',
@@ -561,7 +560,7 @@ end
 
 -- Shortcut for creating telescope keymaps.
 -- Usage:
---    -- This would create two keymaps: <leader>fx and <leader>sx.
+--    -- This would create two keymaps: <leader><leader>fx and <leader><leader>sx.
 --    -- 'f' mappings call find_files on the provided paths, with the provided titles.
 --    -- 's' mappings do the same but with live_grep.
 --    map_search_shortcuts(
@@ -572,8 +571,8 @@ end
 --       true,  -- optional 'hidden'
 --       )
 _G.map_search_shortcuts = function(map_letter, search_dirs, prompt, follow, hidden)
-  local find_mapping = '<leader>f' .. map_letter
-  local grep_mapping = '<leader>s' .. map_letter
+  local find_mapping = '<leader><leader>f' .. map_letter
+  local grep_mapping = '<leader><leader>s' .. map_letter
   local find_prompt = 'Find ' .. prompt
   local grep_prompt = 'Grep ' .. prompt
   vim.keymap.set('n', find_mapping, function()
@@ -583,6 +582,13 @@ _G.map_search_shortcuts = function(map_letter, search_dirs, prompt, follow, hidd
     live_grep(search_dirs, grep_prompt, follow, hidden)
   end, { desc = grep_prompt })
 end
+
+local dotfile_paths = {
+  vim.fn.expand '~/.config/',
+}
+
+-- <leader><leader>d to grep all dotfiles.
+map_search_shortcuts('d', dotfile_paths, 'dotfiles', true, true)
 
 vim.g.themeindex = 0
 function RotateColorscheme()
@@ -807,31 +813,23 @@ require('lazy').setup({
       local builtin = require 'telescope.builtin'
 
       -- TODO: These are not how I want them! take some time to fix them.
-      vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
+      vim.keymap.set('n', '<leader>help', builtin.help_tags, { desc = 'search [help]' })
       vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
-      vim.keymap.set('n', '<leader>sd', builtin.find_files, { desc = '[F]ind in open [Files]' })
+      vim.keymap.set('n', '<leader>sdir', builtin.find_files, { desc = '[F]ind in open [Files]' })
       vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
       vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
       vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
-      vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
+      vim.keymap.set('n', '<leader>dd', builtin.diagnostics, { desc = 'Search [D]iagnostics' })
       vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
-      vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
-      vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
+      vim.keymap.set('n', '<leader>sb', builtin.buffers, { desc = '[S]earch open [B]uffers' })
 
-      vim.keymap.set('n', '<leader>dd', '<Cmd>Telescope diagnostics<CR>', { desc = 'Open buffer diagnostics' })
-      vim.keymap.set('n', '<leader>sf', grep_buffer, { desc = 'grep buffer' })
-      vim.keymap.set('n', '<leader>sb', grep_all_open_buffers, { desc = 'grep all open buffers' })
-      vim.keymap.set('n', '<leader>sh', grep_help, { desc = 'grep help tags' })
-      vim.keymap.set('n', '<leader>sn', grep_nvim_help, { desc = 'grep nvim help' })
-      vim.keymap.set('n', '<leader>sp', grep_dir, { desc = 'grep directory' })
-      vim.keymap.set('n', '<leader>st', '<Cmd>Telescope treesitter<CR>', { desc = 'grep treesitter' })
-      vim.keymap.set('n', '<leader>sk', '<Cmd>Telescope keymaps<CR>', { desc = 'grep keymaps' })
-      -- { "<leader>sd", require("markwell.grep").grep_dotfiles,         desc = "grep dotfiles" },
-      -- { "<leader>fd", require("markwell.find").find_dotfiles, desc = "Open from dotfiles", },
-      vim.keymap.set('n', '<leader>fh', find_history, { desc = 'Open from history' })
-      vim.keymap.set('n', '<leader>fp', find_files, { desc = 'Open from directory' })
+      vim.keymap.set('n', '<leader>sp', grep_dir, { desc = '[S]earch in [P]roject (current directory)' })
+      vim.keymap.set('n', '<leader>st', '<Cmd>Telescope treesitter<CR>', { desc = '[S]earch [T]reesitter symbols' })
+      vim.keymap.set('n', '<leader>sn', grep_nvim_config, { desc = '[S]earch [N]vim Config' })
+      vim.keymap.set('n', '<leader>fn', find_nvim_config, { desc = '[F]ind in [N]vim Config' })
+      vim.keymap.set('n', '<leader>fh', find_history, { desc = '[F]ind in [H]istory' })
+      vim.keymap.set('n', '<leader>fp', find_files_current_directory, { desc = '[F]ind in [P]roject (current directory)' })
       vim.keymap.set('n', '<leader>fr', find_related, { desc = 'Open from related files' })
-      vim.keymap.set('n', '<leader>rr', '<Cmd>Telescope resume<CR>', { desc = 'Resume Telescope picker' })
 
       -- Slightly advanced example of overriding default behavior and theme
       vim.keymap.set('n', '<leader>/', function()
@@ -850,11 +848,6 @@ require('lazy').setup({
           prompt_title = 'Live Grep in Open Files',
         }
       end, { desc = '[S]earch [/] in Open Files' })
-
-      -- Shortcut for searching your Neovim configuration files
-      vim.keymap.set('n', '<leader>sn', function()
-        builtin.find_files { cwd = vim.fn.stdpath 'config' }
-      end, { desc = '[S]earch [N]eovim files' })
     end,
   },
   {
@@ -1586,6 +1579,7 @@ require('lazy').setup({
     dependencies = { 'nvim-treesitter/nvim-treesitter' },
     config = function()
       require('render-markdown').setup {}
+      vim.keymap.set('n', '<leader>md', '<Cmd>RenderMarkdownToggle<CR>', { desc = 'Toggle [M]ark[d]own' })
     end,
   },
   {
