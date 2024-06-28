@@ -1166,6 +1166,36 @@ require('lazy').setup({
       local luasnip = require 'luasnip'
       luasnip.config.setup {}
 
+      luasnip.config.set_config {
+        history = true,
+        updateevents = 'TextChanged,TextChangedI',
+        delete_check_events = 'TextChanged',
+      }
+      require('luasnip.loaders.from_lua').lazy_load {
+        paths = vim.fn.stdpath 'config' .. '/snippets',
+      }
+
+      -- Set keymaps for Luasnip.
+      vim.keymap.set({ 'i', 'n', 's' }, '<C-k>', function()
+        if luasnip.jumpable(-1) then
+          luasnip.jump(-1)
+        end
+      end)
+      vim.keymap.set({ 'i', 'n', 's' }, '<C-j>', function()
+        if luasnip.jumpable(1) then
+          luasnip.jump(1)
+        end
+      end)
+      vim.keymap.set({ 'i', 's' }, '<Tab>', function()
+        if luasnip.choice_active() then
+          return '<Plug>luasnip-next-choice'
+        else
+          return '<Tab>'
+        end
+      end, {
+        expr = true,
+      })
+
       cmp.setup {
         snippet = {
           expand = function(args)
