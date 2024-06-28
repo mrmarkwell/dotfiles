@@ -24,6 +24,7 @@ My own todo list for this config.
 TODO:
 - Investigate snippets.
 - Java tabs are wrong. (4 spaces?)
+- ciderlsp gets started multiple times. Don't start it if it is already started.
 
 NOTE: Reminders of cool functionality.
 - Highlight a region and type 'gc' to toggle converting it into a comment.
@@ -1066,7 +1067,6 @@ require('lazy').setup({
         'stylua', -- Used to format Lua code
         'nixpkgs-fmt', -- Used to format nix code.
         'buildifier', -- Used to format bazel files.
-        -- 'clangd', -- Don't include this - it is in 'servers' above! It will overwrite if you do.
         'clang-format',
         'rust-analyzer',
         'lua-language-server',
