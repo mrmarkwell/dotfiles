@@ -871,9 +871,20 @@ require('lazy').setup({
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
       { 'j-hui/fidget.nvim', opts = {} },
 
-      -- `neodev` configures Lua LSP for your Neovim config, runtime and plugins
+      -- `lazydev` configures Lua LSP for your Neovim config, runtime and plugins
       -- used for completion, annotations and signatures of Neovim apis
-      { 'folke/neodev.nvim', opts = {} },
+      {
+        'folke/lazydev.nvim',
+        ft = 'lua', -- only load on lua files
+        opts = {
+          library = {
+            -- See the configuration section for more details
+            -- Load luvit types when the `vim.uv` word is found
+            { path = 'luvit-meta/library', words = { 'vim%.uv' } },
+          },
+        },
+      },
+      { 'Bilal2453/luvit-meta', lazy = true }, -- optional `vim.uv` typings
     },
     config = function()
       -- Brief aside: **What is LSP?**
@@ -1040,6 +1051,9 @@ require('lazy').setup({
           -- cmd = {...},
           -- filetypes = { ...},
           -- capabilities = {},
+          root_dir = function()
+            return false
+          end,
           settings = {
             Lua = {
               completion = {
@@ -1122,6 +1136,13 @@ require('lazy').setup({
     'hrsh7th/nvim-cmp',
     -- We need CmdlineEnter as well since we want completions when we start typing a command (e.g. ':') even if we haven't entered insert mode yet.
     event = { 'InsertEnter', 'CmdlineEnter' },
+    opts = function(_, opts)
+      opts.sources = opts.sources or {}
+      table.insert(opts.sources, {
+        name = 'lazydev',
+        group_index = 0, -- set group index to 0 to skip loading LuaLS completions
+      })
+    end,
     dependencies = {
       -- Snippet Engine & its associated nvim-cmp source
       {
