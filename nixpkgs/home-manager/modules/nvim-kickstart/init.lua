@@ -23,8 +23,7 @@ ln -s ~/path/to/some/google-specific/repo/google.lua ./lua/google.lua
 My own todo list for this config.
 TODO:
 - Investigate snippets.
-- Get "Tab" to select the first suggestion in the command completion list (e.g. :Tele<Tab> should select the first item in the suggestion list).
-- Java tabs are wrong.
+- Java tabs are wrong. (4 spaces?)
 
 NOTE: Reminders of cool functionality.
 - Highlight a region and type 'gc' to toggle converting it into a comment.
@@ -860,6 +859,7 @@ require('lazy').setup({
   {
     -- LSP Configuration & Plugins
     'neovim/nvim-lspconfig',
+    event = 'BufReadPre',
     dependencies = {
       -- Automatically install LSPs and related tools to stdpath for Neovim
       'williamboman/mason.nvim',
@@ -1066,7 +1066,7 @@ require('lazy').setup({
         'stylua', -- Used to format Lua code
         'nixpkgs-fmt', -- Used to format nix code.
         'buildifier', -- Used to format bazel files.
-        'clangd',
+        -- 'clangd', -- Don't include this - it is in 'servers' above! It will overwrite if you do.
         'clang-format',
         'rust-analyzer',
         'lua-language-server',
@@ -1274,6 +1274,7 @@ require('lazy').setup({
         },
         sources = {
           -- Order matters here. Prioritize the useful stuff!
+          { name = 'nvim_ciderlsp' }, -- Should this be here?
           { name = 'nvim_lsp_signature_help' },
           { name = 'nvim_lsp' },
           { name = 'luasnip' },
