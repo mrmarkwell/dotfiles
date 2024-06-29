@@ -998,7 +998,12 @@ require('lazy').setup({
           if client and client.server_capabilities.documentHighlightProvider then
             vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
               buffer = event.buf,
-              callback = vim.lsp.buf.document_highlight,
+              callback = function()
+                -- Documenthighlight not supported in pbtxt (but is advertised).
+                if vim.bo[event.buf].filetype ~= 'pbtxt' then
+                  vim.lsp.buf.document_highlight()
+                end
+              end,
             })
 
             vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
@@ -1362,14 +1367,14 @@ require('lazy').setup({
         }),
         sources = {
           -- Order matters here. Prioritize the useful stuff!
-          { name = 'nvim_ciderlsp' }, -- TODO: Not working.
-          { name = 'nvim_lsp' },
-          { name = 'luasnip' },
-          { name = 'nvim_lua' },
-          { name = 'path' },
+          { name = 'nvim_ciderlsp', priority = 30 }, -- TODO: Not working.
+          { name = 'nvim_lsp', priority = 20 },
+          { name = 'luasnip', priority = 10 },
+          { name = 'nvim_lua', priority = 1 },
+          { name = 'path', priority = 1 },
           -- We don't want a lot of suggestions from the current buffer.
-          { name = 'buffer', max_item_count = 3 },
-          { name = 'nvim_lsp_signature_help' },
+          { name = 'buffer', max_item_count = 3, priority = 1 },
+          { name = 'nvim_lsp_signature_help', priority = 1 },
         },
         sorting = {
           comparators = {
@@ -1400,12 +1405,9 @@ require('lazy').setup({
           },
         },
         experimental = {
-          ghost_text = true,
+          -- TODO: I think this might be necessary for ML completions.
+          --ghost_text = true,
         },
-        -- sorting = {
-        --   comparators = {}, -- We stop all sorting to let the lsp do the sorting
-        --   priority_weight = 1,
-        -- },
         -- Disable inside comments. Autocomplete in comments is super annoying!
         enabled = function()
           if require('cmp.config.context').in_treesitter_capture('comment') == true or require('cmp.config.context').in_syntax_group('Comment') then
@@ -1508,7 +1510,7 @@ require('lazy').setup({
     config = function()
       -- Use notify as the default 'notify' function.
       vim.notify = require('notify')
-      vim.notify.setup({ timeout = 20000 })
+      vim.notify.setup({ timeout = 5000 })
     end,
   },
   -- Highlight todo, notes, etc in comments
