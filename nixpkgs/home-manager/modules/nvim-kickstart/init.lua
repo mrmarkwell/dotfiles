@@ -25,7 +25,7 @@ Note: I'm on Neovim v0.10.0 currently.
 My own todo list for this config.
 TODO:
 - Investigate snippets.
-- ciderlsp gets started multiple times. Don't start it if it is already started.
+- Get multiline ML completions working.
 
 NOTE: Reminders of cool functionality.
 - Highlight a region and type 'gc' to toggle converting it into a comment.
@@ -64,6 +64,7 @@ The original kickstart comment header starts here.
 ========         `"")----------------(""`   ___________      ========
 ========        /::::::::::|  |::::::::::\  \ no mouse \     ========
 ========       /:::========|  |==hjkl==:::\  \ required \    ========
+
 ========      '""""""""""""'  '""""""""""""'  '""""""""""'   ========
 ========                                                     ========
 =====================================================================
@@ -639,6 +640,8 @@ vim.keymap.set('n', '<F8>', RotateColorscheme)
 --
 -- NOTE: Here is where you install your plugins.
 require('lazy').setup({
+  change_detection = { enabled = false },
+
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
 
@@ -1096,6 +1099,7 @@ require('lazy').setup({
                 },
                 globals = {
                   'vim', -- Neovim
+                  'require',
                   'use', -- Packer
                 },
               },
@@ -1145,7 +1149,9 @@ require('lazy').setup({
     -- Autoformat
     'stevearc/conform.nvim',
     opts = {
-      notify_on_error = true,
+      -- Turning this to true is very useful when debugging style issues.
+      -- See :ConformInfo also to see any logs from conform if things aren't working.
+      notify_on_error = false,
 
       format_on_save = {
         -- I recommend these options. See :help conform.format for details.
@@ -1356,6 +1362,7 @@ require('lazy').setup({
         }),
         sources = {
           -- Order matters here. Prioritize the useful stuff!
+          { name = 'nvim_ciderlsp' }, -- TODO: Not working.
           { name = 'nvim_lsp' },
           { name = 'luasnip' },
           { name = 'nvim_lua' },
