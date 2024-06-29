@@ -509,34 +509,34 @@ local find_related = function()
   local pickers = require('telescope.pickers')
   local opts = {}
   pickers
-      .new(opts, {
-        prompt_title = 'Find in Related Files',
-        previewer = config.grep_previewer(opts),
-        sorter = config.generic_sorter(opts),
-        finder = finders.new_table({
-          results = get_related_files(),
-          entry_maker = function(entry)
-            return {
-              value = entry.filename,
-              ordinal = entry.filename,
-              display = entry.filename,
-              lnum = entry.lnum,
-            }
-          end,
-        }),
-        attach_mappings = function()
-          action_set.select:enhance({
-            post = function()
-              local selection = action_state.get_selected_entry()
-              if selection.lnum ~= 0 then
-                vim.api.nvim_win_set_cursor(0, { selection.lnum, 0 })
-              end
-            end,
-          })
-          return true
+    .new(opts, {
+      prompt_title = 'Find in Related Files',
+      previewer = config.grep_previewer(opts),
+      sorter = config.generic_sorter(opts),
+      finder = finders.new_table({
+        results = get_related_files(),
+        entry_maker = function(entry)
+          return {
+            value = entry.filename,
+            ordinal = entry.filename,
+            display = entry.filename,
+            lnum = entry.lnum,
+          }
         end,
-      })
-      :find()
+      }),
+      attach_mappings = function()
+        action_set.select:enhance({
+          post = function()
+            local selection = action_state.get_selected_entry()
+            if selection.lnum ~= 0 then
+              vim.api.nvim_win_set_cursor(0, { selection.lnum, 0 })
+            end
+          end,
+        })
+        return true
+      end,
+    })
+    :find()
 end
 
 -- Helper function for a scoped grep search with telescope.
@@ -652,7 +652,7 @@ require('lazy').setup({
   --    require('Comment').setup({})
 
   -- "gc" to comment visual regions/lines
-  { 'numToStr/Comment.nvim',    opts = {} },
+  { 'numToStr/Comment.nvim', opts = {} },
 
   -- Here is a more advanced example where we pass configuration
   -- options to `gitsigns.nvim`. This is equivalent to the following Lua:
@@ -738,7 +738,7 @@ require('lazy').setup({
       { 'nvim-telescope/telescope-ui-select.nvim' },
 
       -- Useful for getting pretty icons, but requires a Nerd Font.
-      { 'nvim-tree/nvim-web-devicons',            enabled = vim.g.have_nerd_font },
+      { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
     },
     cmd = 'Telescope',
     config = function()
@@ -852,8 +852,7 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sn', grep_nvim_config, { desc = '[S]earch [N]vim Config' })
       vim.keymap.set('n', '<leader>fn', find_nvim_config, { desc = '[F]ind in [N]vim Config' })
       vim.keymap.set('n', '<leader>fh', find_history, { desc = '[F]ind in [H]istory' })
-      vim.keymap.set('n', '<leader>fp', find_files_current_directory,
-        { desc = '[F]ind in [P]roject (current directory)' })
+      vim.keymap.set('n', '<leader>fp', find_files_current_directory, { desc = '[F]ind in [P]roject (current directory)' })
       vim.keymap.set('n', '<leader>fr', find_related, { desc = 'Open from related files' })
 
       -- Slightly advanced example of overriding default behavior and theme
@@ -887,7 +886,7 @@ require('lazy').setup({
 
       -- Useful status updates for LSP.
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-      { 'j-hui/fidget.nvim',    opts = {} },
+      { 'j-hui/fidget.nvim', opts = {} },
 
       -- `lazydev` configures Lua LSP for your Neovim config, runtime and plugins
       -- used for completion, annotations and signatures of Neovim apis
@@ -1117,9 +1116,9 @@ require('lazy').setup({
       -- for you, so that they are available from within Neovim.
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
-        'stylua',      -- Used to format Lua code
+        'stylua', -- Used to format Lua code
         'nixpkgs-fmt', -- Used to format nix code.
-        'buildifier',  -- Used to format bazel files.
+        'buildifier', -- Used to format bazel files.
         'clang-format',
         'rust-analyzer',
         'lua-language-server',
@@ -1150,7 +1149,8 @@ require('lazy').setup({
 
       format_on_save = {
         -- I recommend these options. See :help conform.format for details.
-        lsp_format = 'prefer',
+        lsp_format = 'fallback',
+        --lsp_format = 'prefer',
         timeout_ms = 500,
       },
       -- format_on_save = function(bufnr)
@@ -1166,7 +1166,7 @@ require('lazy').setup({
       --   }
       -- end,
       formatters_by_ft = {
-        -- lua = { 'stylua' },
+        lua = { 'stylua' },
         cpp = { 'clang-format' },
         bzl = { 'buildifier' },
         -- Conform can also run multiple formatters sequentially
@@ -1176,19 +1176,20 @@ require('lazy').setup({
         -- is found.
         -- javascript = { { "prettierd", "prettier" } },
       },
-      -- TODO: This configuration didn't work. It doesn't matter now since I set
-      -- lsp_format='prefer' (so vim.lsp.buf.format() will be called if
-      -- possible.
-      -- formatters = {
-      --   stylua = {
-      --     -- This can be a string or a function that returns a string.
-      --     -- When defining a new formatter, this is the only field that is required
-      --     command = 'stylua',
-      --     -- A list of strings, or a function that returns a list of strings
-      --     -- Return a single string instead of a list to run the command in a shell
-      --     args = '--call-parentheses=Always --quote-style=ForceSingle --indent-type=Spaces --indent-width=2',
-      --   },
-      -- },
+      formatters = {
+        ['clang-format'] = {
+          -- Always use google style.
+          prepend_args = { '--style', 'Google' },
+        },
+        stylua = {
+          -- This can be a string or a function that returns a string.
+          -- When defining a new formatter, this is the only field that is required
+          --command = 'stylua',
+          -- A list of strings, or a function that returns a list of strings
+          -- Return a single string instead of a list to run the command in a shell
+          prepend_args = { '--call-parentheses', 'Always', '--quote-style', 'ForceSingle', '--indent-type=Spaces', '--indent-width=2' },
+        },
+      },
     },
   },
   {
@@ -1360,7 +1361,7 @@ require('lazy').setup({
           { name = 'nvim_lua' },
           { name = 'path' },
           -- We don't want a lot of suggestions from the current buffer.
-          { name = 'buffer',                 max_item_count = 3 },
+          { name = 'buffer', max_item_count = 3 },
           { name = 'nvim_lsp_signature_help' },
         },
         sorting = {
@@ -1593,29 +1594,29 @@ require('lazy').setup({
           -- key mappings for actions in the trouble list
           -- map to {} to remove a mapping, for example:
           -- close = {},
-          close = 'q',                     -- close the list
-          cancel = '<esc>',                -- cancel the preview and get back to your last window / buffer / cursor
-          refresh = 'r',                   -- manually refresh
-          jump = { '<cr>', '<tab>' },      -- jump to the diagnostic or open / close folds
-          open_split = { '<c-x>' },        -- open buffer in new split
-          open_vsplit = { '<c-v>' },       -- open buffer in new vsplit
-          open_tab = { '<c-t>' },          -- open buffer in new tab
-          jump_close = { 'o' },            -- jump to the diagnostic and close the list
-          toggle_mode = 'm',               -- toggle between "workspace" and "document" diagnostics mode
-          toggle_preview = 'P',            -- toggle auto_preview
-          hover = 'K',                     -- opens a small popup with the full multiline message
-          preview = 'p',                   -- preview the diagnostic location
-          close_folds = { 'zM', 'zm' },    -- close all folds
-          open_folds = { 'zR', 'zr' },     -- open all folds
-          toggle_fold = { 'zA', 'za' },    -- toggle fold of current file
-          previous = 'k',                  -- preview item
-          next = 'j',                      -- next item
+          close = 'q', -- close the list
+          cancel = '<esc>', -- cancel the preview and get back to your last window / buffer / cursor
+          refresh = 'r', -- manually refresh
+          jump = { '<cr>', '<tab>' }, -- jump to the diagnostic or open / close folds
+          open_split = { '<c-x>' }, -- open buffer in new split
+          open_vsplit = { '<c-v>' }, -- open buffer in new vsplit
+          open_tab = { '<c-t>' }, -- open buffer in new tab
+          jump_close = { 'o' }, -- jump to the diagnostic and close the list
+          toggle_mode = 'm', -- toggle between "workspace" and "document" diagnostics mode
+          toggle_preview = 'P', -- toggle auto_preview
+          hover = 'K', -- opens a small popup with the full multiline message
+          preview = 'p', -- preview the diagnostic location
+          close_folds = { 'zM', 'zm' }, -- close all folds
+          open_folds = { 'zR', 'zr' }, -- open all folds
+          toggle_fold = { 'zA', 'za' }, -- toggle fold of current file
+          previous = 'k', -- preview item
+          next = 'j', -- next item
         },
-        indent_lines = true,               -- add an indent guide below the fold icons
-        auto_open = false,                 -- automatically open the list when you have diagnostics
-        auto_close = false,                -- automatically close the list when you have no diagnostics
-        auto_preview = true,               -- automatically preview the location of the diagnostic. <esc> to close preview and go back to last window
-        auto_fold = false,                 -- automatically fold a file trouble list at creation
+        indent_lines = true, -- add an indent guide below the fold icons
+        auto_open = false, -- automatically open the list when you have diagnostics
+        auto_close = false, -- automatically close the list when you have no diagnostics
+        auto_preview = true, -- automatically preview the location of the diagnostic. <esc> to close preview and go back to last window
+        auto_fold = false, -- automatically fold a file trouble list at creation
         auto_jump = { 'lsp_definitions' }, -- for the given modes, automatically jump if there is only a single result
         signs = {
           -- icons / text used for a diagnostic
@@ -1629,13 +1630,13 @@ require('lazy').setup({
       })
     end,
     keys = {
-      { '<leader>d',  desc = 'Diagnostics (Trouble)' },
-      { '<leader>dt', '<cmd>TroubleToggle<CR>',                 desc = 'Trouble Toggle' },
+      { '<leader>d', desc = 'Diagnostics (Trouble)' },
+      { '<leader>dt', '<cmd>TroubleToggle<CR>', desc = 'Trouble Toggle' },
       { '<leader>dw', '<cmd>Trouble workspace_diagnostics<CR>', desc = 'Trouble Workspace Diagnostics' },
-      { '<leader>dd', '<cmd>Trouble document_diagnostics<CR>',  desc = 'Trouble Doc Diagnostics' },
-      { '<leader>dl', '<cmd>Trouble loclist<CR>',               desc = 'Trouble Loclist' },
-      { '<leader>dq', '<cmd>Trouble quickfix<CR>',              desc = 'Trouble Quickfix' },
-      { '<leader>dk', vim.diagnostic.open_float,                desc = 'Open Diagnostic Float' },
+      { '<leader>dd', '<cmd>Trouble document_diagnostics<CR>', desc = 'Trouble Doc Diagnostics' },
+      { '<leader>dl', '<cmd>Trouble loclist<CR>', desc = 'Trouble Loclist' },
+      { '<leader>dq', '<cmd>Trouble quickfix<CR>', desc = 'Trouble Quickfix' },
+      { '<leader>dk', vim.diagnostic.open_float, desc = 'Open Diagnostic Float' },
     },
   },
   {
