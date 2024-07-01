@@ -288,22 +288,6 @@ vim.api.nvim_create_user_command('W', 'w', {})
 vim.api.nvim_create_user_command('Qa', 'qa', {})
 vim.api.nvim_create_user_command('Q', 'q', {})
 
--- Pretty print command - for mapping to an nvim user command "PrettyPrint".
--- Usage:
---  :PrettyPrint(vim.opt.hlsearch)
-local pretty_print_command = function(opts)
-  -- parse the arguments
-  local parsed = load('return ' .. opts.args)()
-  local inspect = require('inspect')
-  vim.notify(inspect(parsed))
-end
-vim.api.nvim_create_user_command('PrettyPrint', pretty_print_command, { nargs = '?', desc = 'Inspect a value' })
-
--- Global pretty print function.
-_G.pretty_print = function(var)
-  local inspect = require('inspect')
-  vim.notify(inspect(var))
-end
 -- Quickfix list navigation
 vim.keymap.set('n', '<C-k>', '<cmd>cnext<CR>zz')
 vim.keymap.set('n', '<C-j>', '<cmd>cprev<CR>zz')
@@ -380,6 +364,33 @@ end ---@diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)
 
 -- NOTE: markwell functions start
+
+-- Pretty print command - for mapping to an nvim user command "PrettyPrint".
+-- Usage:
+--  :PrettyPrint(vim.opt.hlsearch)
+local pretty_print_command = function(opts)
+  -- parse the arguments
+  local parsed = load('return ' .. opts.args)()
+  local inspect = require('inspect')
+  vim.notify(inspect(parsed))
+end
+vim.api.nvim_create_user_command('PrettyPrint', pretty_print_command, { nargs = '?', desc = 'Inspect a value' })
+
+-- Global pretty print function.
+_G.pretty_print = function(var)
+  local inspect = require('inspect')
+  vim.notify(inspect(var))
+end
+
+-- Helper function to check if a list contains a variable.
+local function contains(list, var)
+  for _, value in ipairs(list) do
+    if value == var then
+      return true
+    end
+  end
+  return false
+end
 
 local find_files_current_directory = function()
   require('telescope.builtin').find_files({
@@ -949,8 +960,10 @@ require('lazy').setup({
             vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
               buffer = event.buf,
               callback = function()
-                -- Documenthighlight not supported in pbtxt (but is advertised).
-                if vim.bo[event.buf].filetype ~= 'pbtxt' then
+                -- Add filetypes here if they don't support documentHighlight
+                local unsupported_filetypes = { 'pbtxt', 'bzl' }
+                local current_filetype = vim.bo[event.buf].filetype
+                if not contains(unsupported_filetypes, current_filetype) then
                   vim.lsp.buf.document_highlight()
                 end
               end,
