@@ -381,23 +381,6 @@ vim.opt.rtp:prepend(lazypath)
 
 -- NOTE: markwell functions start
 
--- Big keyboards have backtick where my escape key is on my little keyboard.
--- Run this with `:lua TildeMapToEsc()`.
--- WARN: I shouldn't need to use this.... just get used to using a bigger keyboard.
-function TildeMapToEsc()
-  vim.keymap.set('n', '`', '<esc>')
-  vim.keymap.set('v', '`', '<esc>')
-  vim.keymap.set('i', '`', '<esc>')
-end
-
-local find_nvim_config = function()
-  require('telescope.builtin').find_files({
-    prompt_title = 'Find in Dotfiles',
-    cwd = vim.fn.stdpath('config'),
-    follow = true,
-  })
-end
-
 local find_files_current_directory = function()
   require('telescope.builtin').find_files({
     prompt_title = 'Find in Directory',
@@ -426,43 +409,6 @@ end
 local grep_dir = function()
   require('telescope.builtin').live_grep({
     prompt_title = 'grep Directory',
-  })
-end
-
-local grep_nvim_config = function()
-  require('telescope.builtin').live_grep({
-    prompt_title = '[S]earch [N]vim Config',
-    cwd = vim.fn.stdpath('config'),
-    vimgrep_arguments = {
-      'rg',
-      '--color=never',
-      '--no-heading',
-      '--with-filename',
-      '--line-number',
-      '--column',
-      '--smart-case',
-      '--follow',
-    },
-  })
-end
-
-local grep_help = function()
-  require('telescope.builtin').help_tags({
-    prompt_title = 'grep Help Tags',
-  })
-end
-
-local grep_nvim_help = function()
-  require('telescope.builtin').live_grep({
-    prompt_title = 'grep NVIM help',
-    search_dirs = { '~/nvimhelp.txt' },
-  })
-end
-
-local grep_all_open_buffers = function()
-  require('telescope.builtin').live_grep({
-    grep_open_files = true,
-    prompt_title = 'grep all open buffers',
   })
 end
 
@@ -612,8 +558,14 @@ local dotfile_paths = {
   vim.fn.expand('~/.config/'),
 }
 
+local nvim_config_paths = {
+  vim.fn.expand('~/.config/nvim/'),
+  vim.fn.expand('~/.config/nvim/lua/google.lua'),
+}
+
 -- <leader><leader>d to grep all dotfiles.
-map_search_shortcuts('d', dotfile_paths, 'dotfiles', true, true)
+map_search_shortcuts('d', dotfile_paths, 'Dotfiles', true, true)
+map_search_shortcuts('n', nvim_config_paths, 'Nvim Config', true, true)
 
 vim.g.themeindex = 0
 function RotateColorscheme()
@@ -852,8 +804,6 @@ require('lazy').setup({
 
       vim.keymap.set('n', '<leader>sp', grep_dir, { desc = '[S]earch in [P]roject (current directory)' })
       vim.keymap.set('n', '<leader>st', '<Cmd>Telescope treesitter<CR>', { desc = '[S]earch [T]reesitter symbols' })
-      vim.keymap.set('n', '<leader>sn', grep_nvim_config, { desc = '[S]earch [N]vim Config' })
-      vim.keymap.set('n', '<leader>fn', find_nvim_config, { desc = '[F]ind in [N]vim Config' })
       vim.keymap.set('n', '<leader>fh', find_history, { desc = '[F]ind in [H]istory' })
       vim.keymap.set('n', '<leader>fp', find_files_current_directory, { desc = '[F]ind in [P]roject (current directory)' })
       vim.keymap.set('n', '<leader>fr', find_related, { desc = 'Open from related files' })
@@ -1568,7 +1518,10 @@ require('lazy').setup({
         --  the list of additional_vim_regex_highlighting and disabled languages for indent.
         additional_vim_regex_highlighting = { 'ruby' },
       },
-      indent = { enable = true, disable = { 'ruby' } },
+      -- TODO: I'm not convinced treesitter is better than the default nvim indent capability.
+      -- I do know that it sucks for Java, so disable that here. But I might want to just disable this alltogether.
+      -- Look here first if there is any funky indentation issue.
+      indent = { enable = true, disable = { 'ruby', 'java' } },
     },
     config = function(_, opts)
       -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
