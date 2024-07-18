@@ -26,13 +26,6 @@
       wisdom
     '';
     functions = {
-      # Example: `hm markwells-mbp` to switch.
-      hm = ''
-        pushd ~/dotfiles/nixpkgs
-        home-manager switch --flake .#$argv[1]
-        popd
-      '';
-
       whatsmyip = ''
         curl ifconfig.me
       '';
@@ -73,9 +66,12 @@
       "....." = "cd ../../../..";
       vim = "nvim";
       eb = "nvim ~/dotfiles/nixpkgs/home-manager/modules/fish.nix";
+      sb = "source ~/.config/fish/config.fish";
       em = "nvim ~/dotfiles/nixpkgs/home-manager/modules/";
       fnvim = "nvim (fzf)";
-      hms = "hm markwells-mbp"; # home-manager switch shortcut for my mac.
+      # Home manager switch.
+      hms = "home-manager switch --flake /Users/markwell/dotfiles/nixpkgs#markwells-mbp";
+      flakeupdate = "nix flake update /Users/markwell/dotfiles/nixpkgs";
       blaze = "bazel";
     };
   };
