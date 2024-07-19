@@ -667,6 +667,15 @@ require('lazy').setup({
         -- Expand if there is no description.
         return not node.desc
       end,
+      spec = {
+        { '<leader>c', group = '[C]ode' },
+        { '<leader>d', group = '[D]ocument' },
+        { '<leader>r', group = '[R]ename' },
+        { '<leader>s', group = '[S]earch' },
+        { '<leader>w', group = '[W]orkspace' },
+        { '<leader>f', group = '[F]ind' },
+        { '<leader><leader>', group = 'Telescope Path' },
+      },
     },
     keys = {
       {
@@ -677,19 +686,6 @@ require('lazy').setup({
         desc = 'Buffer Local Keymaps (which-key)',
       },
     },
-    config = function(_, opts)
-      local wk = require('which-key')
-      wk.setup(opts)
-      wk.add({
-        { '<leader>c', group = '[C]ode' },
-        { '<leader>d', group = '[D]ocument' },
-        { '<leader>r', group = '[R]ename' },
-        { '<leader>s', group = '[S]earch' },
-        { '<leader>w', group = '[W]orkspace' },
-        { '<leader>f', group = '[F]ind' },
-        { '<leader><leader>', group = 'Telescope Path' },
-      })
-    end,
   },
 
   -- NOTE: Plugins can specify dependencies.
