@@ -31,14 +31,15 @@ NOTE: Reminders of cool functionality.
 - Highlight a region and type 'gc' to toggle converting it into a comment.
 - :terminal opens a terminal in a buffer. 'i' to use it (terminal mode) and '<esc><esc>' to exit.
 - Telescope
-  - <leader>help to search [help]
-  - leader>sr to reopen telescope [S]earch [R]esume.
-  - <leader>sk to [S]earch [K]eymaps (useful if you forget a mapping!).
-  - <leader>/ to fuzzy search in current buffer.
-  - <leader>s/ to fuzzy search in all open buffers
-  - <leader>fh to [F]ind in [H]istory
-  - <leader><leader>s{prefix} to [S]earch for the mapped prefix.
-  - <leader><leader>f{prefix} to [F]ind in the mapped prefix.
+  - <leader>help -> search [help]
+  - leader>sr -> reopen telescope [S]earch [R]esume.
+  - <leader>sk -> [S]earch [K]eymaps (useful if you forget a mapping!).
+  - <leader>/ -> fuzzy search in current buffer.
+  - <leader>s/ -> fuzzy search in all open buffers
+  - <leader>fh -> [F]ind in [H]istory
+  - <leader>o -> repoen [O]ld file (most recent buffer that isn't already open)
+  - <leader><leader>s{prefix} -> [S]earch for the mapped prefix.
+  - <leader><leader>f{prefix} -> [F]ind in the mapped prefix.
 - Diagnostics
   - <leader>n and <leader>N to navigate diagnostic messages.
   - <leader>e to show the full error/diagnosic message on the current line.
@@ -170,6 +171,15 @@ vim.opt.colorcolumn = '81' -- Putting this at 81 since the 80 is the limit.
 
 -- set the current working directory every time moving to a buffer.
 vim.opt.autochdir = true
+
+-- Fold experimentation
+vim.opt.foldmethod = 'expr'
+vim.opt.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+--vim.opt.foldcolumn = '0'
+--vim.opt.foldtext = ''
+vim.opt.foldlevel = 99
+vim.opt.foldlevelstart = 1
+vim.opt.foldnestmax = 2
 
 -- Don't load built-in plugins.
 vim.g.loaded_gzip = true
@@ -364,6 +374,41 @@ end ---@diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)
 
 -- NOTE: markwell functions start
+
+-- Function to open the most recent N buffers from vim.v.oldfiles, skipping already open files
+_G.open_last_n_buffers = function(n)
+  -- Get the list of old files
+  local oldfiles = vim.v.oldfiles
+  -- Calculate the number of files to open
+  local count = math.min(n, #oldfiles)
+  local opened_count = 0
+
+  -- Get the list of currently open buffers
+  local open_buffers = {}
+  for _, buffer in ipairs(vim.api.nvim_list_bufs()) do
+    if vim.api.nvim_buf_is_loaded(buffer) then
+      local buffer_name = vim.api.nvim_buf_get_name(buffer)
+      open_buffers[buffer_name] = true
+    end
+  end
+
+  -- Open the most recent N files, skipping those already open
+  for i = 1, #oldfiles do
+    if opened_count >= count then
+      break
+    end
+    local file_path = oldfiles[i]
+    if vim.fn.filereadable(file_path) == 1 and not open_buffers[file_path] then
+      vim.api.nvim_command('edit ' .. file_path)
+      opened_count = opened_count + 1
+    end
+  end
+end
+
+-- Create a command to open the last N buffers
+vim.api.nvim_create_user_command('OpenLastNBuffers', function(opts)
+  open_last_n_buffers(tonumber(opts.args))
+end, { nargs = 1 })
 
 -- Pretty print command - for mapping to an nvim user command "PrettyPrint".
 -- Usage:
@@ -587,7 +632,8 @@ function RotateColorscheme()
   --vim.api.nvim_echo({{':colorscheme ' .. theme}}, false, {})
 end
 
-vim.keymap.set('n', '<F8>', RotateColorscheme)
+vim.keymap.set('n', '<F8>', RotateColorscheme, { desc = 'Rotate color scheme' })
+vim.keymap.set('n', '<leader>o', ':lua open_last_n_buffers(1)<CR>', { desc = 'Reopen last buffer', noremap = true, silent = true })
 
 -- NOTE: end my functions.
 
