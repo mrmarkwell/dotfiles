@@ -16,6 +16,8 @@
     eza # better ls. (This used to be called exa, and provides 'exa' alias.
     fd # better find
 
+    go
+
     # Random
     hyperfine
     fortune-kind

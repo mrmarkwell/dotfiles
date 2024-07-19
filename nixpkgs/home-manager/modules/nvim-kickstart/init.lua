@@ -32,7 +32,7 @@ NOTE: Reminders of cool functionality.
 - :terminal opens a terminal in a buffer. 'i' to use it (terminal mode) and '<esc><esc>' to exit.
 - Telescope
   - <leader>help to search [help]
-  - <leader>rr to reopen telescope (in whatever state it was last closed).
+  - leader>sr to reopen telescope [S]earch [R]esume.
   - <leader>sk to [S]earch [K]eymaps (useful if you forget a mapping!).
   - <leader>/ to fuzzy search in current buffer.
   - <leader>s/ to fuzzy search in all open buffers
@@ -658,17 +658,36 @@ require('lazy').setup({
     -- Useful plugin to show you pending keybinds.
     'folke/which-key.nvim',
     event = 'VimEnter', -- Sets the loading event to 'VimEnter'
-    config = function() -- This is the function that runs, AFTER loading
-      require('which-key').setup()
-
-      -- Document existing key chains
-      -- TODO: Make sure all my key chains are labelled, and follow the pattern below.
-      require('which-key').register({
-        ['<leader>c'] = { name = '[C]ode', _ = 'which_key_ignore' },
-        ['<leader>d'] = { name = '[D]ocument', _ = 'which_key_ignore' },
-        ['<leader>r'] = { name = '[R]ename', _ = 'which_key_ignore' },
-        ['<leader>s'] = { name = '[S]earch', _ = 'which_key_ignore' },
-        ['<leader>w'] = { name = '[W]orkspace', _ = 'which_key_ignore' },
+    opts = {
+      -- Put the popup in the bottom-right.
+      preset = 'helix',
+      -- Expand sub groups if they're just a single thing.
+      --expand = 1,
+      expand = function(node)
+        -- Expand if there is no description.
+        return not node.desc
+      end,
+    },
+    keys = {
+      {
+        '<leader>?',
+        function()
+          require('which-key').show({ global = false })
+        end,
+        desc = 'Buffer Local Keymaps (which-key)',
+      },
+    },
+    config = function(_, opts)
+      local wk = require('which-key')
+      wk.setup(opts)
+      wk.add({
+        { '<leader>c', group = '[C]ode' },
+        { '<leader>d', group = '[D]ocument' },
+        { '<leader>r', group = '[R]ename' },
+        { '<leader>s', group = '[S]earch' },
+        { '<leader>w', group = '[W]orkspace' },
+        { '<leader>f', group = '[F]ind' },
+        { '<leader><leader>', group = 'Telescope Path' },
       })
     end,
   },
@@ -1495,7 +1514,7 @@ require('lazy').setup({
       -- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
       -- - sd'   - [S]urround [D]elete [']quotes
       -- - sr)'  - [S]urround [R]eplace [)] [']
-      require('mini.surround').setup()
+      -- require('mini.surround').setup() -- I don't like surround.
 
       -- Simple and easy statusline.
       --  You could remove this setup call if you don't like it,
