@@ -26,10 +26,16 @@ My own todo list for this config.
 TODO:
 - Investigate snippets.
 - Get multiline ML completions working.
+- Investigate folds.
 
 NOTE: Reminders of cool functionality.
 - Highlight a region and type 'gc' to toggle converting it into a comment.
 - :terminal opens a terminal in a buffer. 'i' to use it (terminal mode) and '<esc><esc>' to exit.
+- General
+  - Use <ctrl>h, j, k, or l to switch between windows.
+  - <leader>config to open nvim config in a new buffer.
+  - <leader>gc to open nvim google config in a new buffer.
+  - <leader>o -> repoen [O]ld file (most recent buffer that isn't already open)
 - Telescope
   - <leader>help -> search [help]
   - leader>sr -> reopen telescope [S]earch [R]esume.
@@ -37,16 +43,12 @@ NOTE: Reminders of cool functionality.
   - <leader>/ -> fuzzy search in current buffer.
   - <leader>s/ -> fuzzy search in all open buffers
   - <leader>fh -> [F]ind in [H]istory
-  - <leader>o -> repoen [O]ld file (most recent buffer that isn't already open)
   - <leader><leader>s{prefix} -> [S]earch for the mapped prefix.
   - <leader><leader>f{prefix} -> [F]ind in the mapped prefix.
 - Diagnostics
   - <leader>n and <leader>N to navigate diagnostic messages.
   - <leader>e to show the full error/diagnosic message on the current line.
   - <leader>l to open the quickfix list.
-- Use <ctrl>h, j, k, or l to switch between windows.
-- <leader>config to open nvim config in a new buffer.
-- <leader>gc to open nvim google config in a new buffer.
 
 The original kickstart comment header starts here.
 
@@ -1064,10 +1066,12 @@ require('lazy').setup({
             '--pch-storage=memory',
             -- Use 20 threads
             '-j=20',
-            '--header-insertion=iwyu',
+            --'--header-insertion=iwyu',
             '--clang-tidy',
             '--fallback-style=Google',
+            '--log=verbose',
           },
+          -- root_dir = require('lspconfig').util.root_pattern('compile_commands.json'),
         },
         -- gopls = {},
         -- pyright = {},
