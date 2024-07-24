@@ -1770,7 +1770,8 @@ require('lazy').setup({
     end,
   },
   {
-    -- Add indentation guides even on blank lines
+    -- Add indentation guides even on blank lines.
+    -- If you need to disable this to block copy, just :IBLDisable
     'lukas-reineke/indent-blankline.nvim',
     -- Enable `lukas-reineke/indent-blankline.nvim`
     -- See `:help ibl`
