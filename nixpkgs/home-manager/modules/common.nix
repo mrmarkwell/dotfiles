@@ -22,6 +22,7 @@
     hyperfine
     fortune-kind
     cowsay
+    luajitPackages.luarocks-nix
 
     # dev
     bazel_7
