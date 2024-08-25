@@ -1024,7 +1024,7 @@ require('lazy').setup({
               buffer = event.buf,
               callback = function()
                 -- Add filetypes here if they don't support documentHighlight
-                local unsupported_filetypes = { 'pbtxt', 'bzl', 'markdown', 'proto' }
+                local unsupported_filetypes = { 'mendel', 'pbtxt', 'bzl', 'markdown', 'proto' }
                 local current_filetype = vim.bo[event.buf].filetype
                 if not contains(unsupported_filetypes, current_filetype) then
                   vim.lsp.buf.document_highlight()
