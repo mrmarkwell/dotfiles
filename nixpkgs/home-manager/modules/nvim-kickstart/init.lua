@@ -1988,6 +1988,13 @@ require('lazy').setup({
       },
     },
   },
+  -- Neorg is a note taking tool.
+  {
+    'nvim-neorg/neorg',
+    lazy = false, -- Disable lazy loading as some `lazy.nvim` distributions set `lazy = true` by default
+    version = '*', -- Pin Neorg to the latest stable release
+    config = true,
+  },
   -- Import all the google plugins. Symlink a 'google.lua' into the lua folder.
   -- It can be empty for non-google configs.
   { import = 'google' },
