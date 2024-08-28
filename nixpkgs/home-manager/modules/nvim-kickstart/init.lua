@@ -1404,34 +1404,34 @@ require('lazy').setup({
           { name = 'buffer', max_item_count = 3, priority = 1 },
           { name = 'nvim_lsp_signature_help', priority = 1 },
         },
-        sorting = {
-          comparators = {
-            -- Default comparators for nvim-cmp
-            -- https://github.com/hrsh7th/nvim-cmp/blob/main/lua/cmp/config/default.lua#L67-L78
-            cmp.config.compare.offset,
-            cmp.config.compare.exact,
-            -- cmp.config.compare.scopes,
-            cmp.config.compare.score,
-            -- Rank items that start with "_", lower. i.e. private fields and methods.
-            function(entry1, entry2)
-              local _, entry1_under = entry1.completion_item.label:find('^_+')
-              local _, entry2_under = entry2.completion_item.label:find('^_+')
-              entry1_under = entry1_under or 0
-              entry2_under = entry2_under or 0
-              if entry1_under > entry2_under then
-                return false
-              elseif entry1_under < entry2_under then
-                return true
-              end
-            end,
-            cmp.config.compare.recently_used,
-            cmp.config.compare.locality,
-            cmp.config.compare.kind,
-            -- cmp.config.compare.sort_text,
-            cmp.config.compare.length,
-            cmp.config.compare.order,
-          },
-        },
+        -- sorting = {
+        --   comparators = {
+        --     -- Default comparators for nvim-cmp
+        --     -- https://github.com/hrsh7th/nvim-cmp/blob/main/lua/cmp/config/default.lua#L67-L78
+        --     cmp.config.compare.offset,
+        --     cmp.config.compare.exact,
+        --     -- cmp.config.compare.scopes,
+        --     cmp.config.compare.score,
+        --     -- Rank items that start with "_", lower. i.e. private fields and methods.
+        --     function(entry1, entry2)
+        --       local _, entry1_under = entry1.completion_item.label:find('^_+')
+        --       local _, entry2_under = entry2.completion_item.label:find('^_+')
+        --       entry1_under = entry1_under or 0
+        --       entry2_under = entry2_under or 0
+        --       if entry1_under > entry2_under then
+        --         return false
+        --       elseif entry1_under < entry2_under then
+        --         return true
+        --       end
+        --     end,
+        --     cmp.config.compare.recently_used,
+        --     cmp.config.compare.locality,
+        --     cmp.config.compare.kind,
+        --     -- cmp.config.compare.sort_text,
+        --     cmp.config.compare.length,
+        --     cmp.config.compare.order,
+        --   },
+        -- },
         experimental = {
           -- TODO: I think this might be necessary for ML completions.
           --ghost_text = true,
