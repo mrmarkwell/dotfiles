@@ -22,7 +22,9 @@
     hyperfine
     fortune-kind
     cowsay
-    luajitPackages.luarocks-nix
+
+    # Trying luarocks.nvim instead.
+    # luajitPackages.luarocks-nix 
 
     # dev
     bazel_7

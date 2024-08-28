@@ -1988,12 +1988,35 @@ require('lazy').setup({
       },
     },
   },
+  {
+    'vhyrro/luarocks.nvim',
+    priority = 1000, -- Very high priority is required, luarocks.nvim should run as the first plugin in your config.
+    config = true,
+  },
   -- Neorg is a note taking tool.
   {
     'nvim-neorg/neorg',
-    lazy = false, -- Disable lazy loading as some `lazy.nvim` distributions set `lazy = true` by default
-    version = '*', -- Pin Neorg to the latest stable release
-    config = true,
+    dependencies = { 'luarocks.nvim' },
+    lazy = false,
+    version = '*',
+    config = function()
+      require('neorg').setup({
+        load = {
+          ['core.defaults'] = {},
+          ['core.concealer'] = {},
+          ['core.dirman'] = {
+            config = {
+              workspaces = {
+                notes = '~/notes',
+              },
+              default_workspace = 'notes',
+            },
+          },
+        },
+      })
+      vim.wo.foldlevel = 99
+      vim.wo.conceallevel = 2
+    end,
   },
   -- Import all the google plugins. Symlink a 'google.lua' into the lua folder.
   -- It can be empty for non-google configs.
