@@ -24,7 +24,8 @@
     cowsay
 
     # Trying luarocks.nvim instead.
-    # luajitPackages.luarocks-nix 
+    lua51Packages.lua
+    lua51Packages.luarocks
 
     # dev
     bazel_7

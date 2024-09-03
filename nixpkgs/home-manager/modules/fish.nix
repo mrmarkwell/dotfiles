@@ -68,9 +68,9 @@
       eb = "nvim ~/dotfiles/nixpkgs/home-manager/modules/fish.nix";
       sb = "source ~/.config/fish/config.fish";
       em = "nvim ~/dotfiles/nixpkgs/home-manager/modules/";
-      fnvim = "nvim (fzf)";
+      fnvim = "nvim (fzf --layout=reverse --border=rounded --height=40% --info=hidden --prompt='> ' --pointer='❯' --marker='✓' --color='bg:#1e222a,bg+:#282c34,hl:#61afef,fg:#abb2bf,fg+:#e5c07b,info:#56b6c2,prompt:#c678dd,pointer:#61afef,marker:#98c379' --preview 'bat --style=numbers --color=always --line-range :500 {}' --preview-window=right:50%:wrap)";
       # Home manager switch.
-      hms = "home-manager switch --flake /Users/markwell/dotfiles/nixpkgs#markwells-mbp";
+      hms = "home-manager switch - -flake /Users/markwell/dotfiles/nixpkgs#markwells-mbp";
       flakeupdate = "nix flake update /Users/markwell/dotfiles/nixpkgs";
       blaze = "bazel";
     };

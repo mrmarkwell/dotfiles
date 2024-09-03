@@ -204,7 +204,7 @@ vim.cmd('autocmd BufEnter * setlocal formatoptions-=cro')
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
 vim.g.mapleader = ' '
-vim.g.maplocalleader = ' '
+vim.g.maplocalleader = ','
 
 -- Set to true if you have a Nerd Font installed
 vim.g.have_nerd_font = true
@@ -318,6 +318,10 @@ vim.keymap.set(
   { desc = 'Dismiss highlights and notify messages silently when hitting <esc> in normal mode.', silent = true }
 )
 
+vim.keymap.set('n', ',jt', ':Neorg journal today<CR>', { desc = 'Neorg [j]ournal [t]oday' })
+vim.keymap.set('n', ',ns', ':Neorg generate-workspace-summary<CR>', { desc = '[N]eorg [s]ummary' })
+vim.keymap.set('n', ',ji', ':Neorg journal toc update<CR>', { desc = '[J]ournal [i]ndex' })
+vim.keymap.set('n', ',ni', ':Neorg index<CR>', { desc = '[N]eorg [i]ndex' })
 vim.keymap.set('n', '<leader>config', '<cmd>e ~/.config/nvim/init.lua<CR>', { desc = 'Open Nvim [Config]' })
 vim.keymap.set('n', '<leader>gc', '<cmd>e ~/.config/nvim/lua/google.lua<CR>', { desc = 'Open Nvim [G]oogle [C]onfig' })
 
@@ -363,6 +367,18 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
   callback = function()
     vim.highlight.on_yank()
+  end,
+})
+
+-- Create a function to disable nvim-cmp
+local function disable_cmp() end
+
+-- Specify the filetypes where you want to disable nvim-cmp
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = { 'norg' }, -- List of filetypes
+  callback = function()
+    require('cmp').setup.buffer({ enabled = false })
+    disable_cmp()
   end,
 })
 
@@ -1731,7 +1747,7 @@ require('lazy').setup({
         -- online, please don't ask me how to install them :)
         ensure_installed = {
           -- Update this to ensure that you have the debuggers for the langs you want
-          'delve',
+          --'delve', -- This is the GO debugger.
         },
       })
 
@@ -1991,7 +2007,6 @@ require('lazy').setup({
   -- Neorg is a note taking tool.
   {
     'nvim-neorg/neorg',
-    dependencies = { 'luarocks.nvim' },
     lazy = false,
     version = '*',
     config = function()
@@ -1999,6 +2014,18 @@ require('lazy').setup({
         load = {
           ['core.defaults'] = {},
           ['core.concealer'] = {},
+          ['core.qol.toc'] = {},
+          ['core.journal'] = {
+            config = {
+              strategy = 'flat',
+              --strategy = 'nested',
+            },
+          },
+          ['core.summary'] = {
+            config = {
+              strategy = 'by_path',
+            },
+          },
           ['core.dirman'] = {
             config = {
               workspaces = {
