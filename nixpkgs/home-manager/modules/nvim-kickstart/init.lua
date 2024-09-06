@@ -318,6 +318,7 @@ vim.keymap.set(
   { desc = 'Dismiss highlights and notify messages silently when hitting <esc> in normal mode.', silent = true }
 )
 
+vim.keymap.set('n', ',if', 'gg=G', { desc = '[i]ndent [f]ile', noremap = true, silent = true })
 vim.keymap.set('n', ',jt', ':Neorg journal today<CR>', { desc = 'Neorg [j]ournal [t]oday' })
 vim.keymap.set('n', ',ns', ':Neorg generate-workspace-summary<CR>', { desc = '[N]eorg [s]ummary' })
 vim.keymap.set('n', ',ji', ':Neorg journal toc update<CR>', { desc = '[J]ournal [i]ndex' })
@@ -2015,6 +2016,22 @@ require('lazy').setup({
         load = {
           ['core.defaults'] = {},
           ['core.concealer'] = {},
+          ['core.itero'] = {},
+          -- ['core.keybinds'] = {
+          --   config = {
+          --     hook = function(keys)
+          --       keys.remap_event('norg', 'i', '<C-CR>', 'core.itero.next-iteration')
+          --       keys.remap_event('norg', 'n', '<C-CR>', 'core.itero.next-iteration')
+          --     end,
+          --   },
+          -- },
+          -- ['core.itero'] = {
+          --   config = {
+          --     mappings = {
+          --       next = '<CR>', -- Remap `next-iteration` to Ctrl-n
+          --     },
+          --   },
+          -- },
           ['core.qol.toc'] = {},
           ['core.journal'] = {
             config = {
