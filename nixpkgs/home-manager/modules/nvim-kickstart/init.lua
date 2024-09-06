@@ -865,6 +865,7 @@ require('lazy').setup({
         },
         pickers = {
           lsp_code_actions = { theme = 'cursor' },
+          lsp_references = { fname_width = 100 },
         },
         extensions = {
           ['ui-select'] = {
