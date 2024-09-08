@@ -318,7 +318,18 @@ vim.keymap.set(
   { desc = 'Dismiss highlights and notify messages silently when hitting <esc> in normal mode.', silent = true }
 )
 
-vim.keymap.set('n', ',if', 'gg=G', { desc = '[i]ndent [f]ile', noremap = true, silent = true })
+local indent_file = function()
+  -- Save current cursor position
+  local current_pos = vim.fn.getpos('.')
+
+  -- Run the indent command
+  vim.cmd('normal! gg=G')
+
+  -- Restore cursor position
+  vim.fn.setpos('.', current_pos)
+end
+
+vim.keymap.set('n', ',,', indent_file, { desc = '[i]ndent [f]ile', noremap = true, silent = true })
 vim.keymap.set('n', ',jt', ':Neorg journal today<CR>', { desc = 'Neorg [j]ournal [t]oday' })
 vim.keymap.set('n', ',ns', ':Neorg generate-workspace-summary<CR>', { desc = '[N]eorg [s]ummary' })
 vim.keymap.set('n', ',ji', ':Neorg journal toc update<CR>', { desc = '[J]ournal [i]ndex' })
@@ -377,7 +388,9 @@ vim.api.nvim_create_autocmd('FileType', {
   callback = function()
     -- Create an autocommand to set keymaps only for 'norg' filetype
     require('cmp').setup.buffer({ enabled = false })
-    vim.keymap.set('i', '<CR>', '<Plug>(neorg.itero.next-iteration)', { buffer = true })
+    -- This works but doesn't do exactly what I want.
+    -- TODO: What's wrong with indenting in this filetype?
+    -- vim.keymap.set('i', '<CR>', '<Plug>(neorg.itero.next-iteration)', { buffer = true })
   end,
 })
 
