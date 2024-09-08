@@ -371,15 +371,13 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
--- Create a function to disable nvim-cmp
-local function disable_cmp() end
-
 -- Specify the filetypes where you want to disable nvim-cmp
 vim.api.nvim_create_autocmd('FileType', {
   pattern = { 'norg' }, -- List of filetypes
   callback = function()
+    -- Create an autocommand to set keymaps only for 'norg' filetype
     require('cmp').setup.buffer({ enabled = false })
-    disable_cmp()
+    vim.keymap.set('i', '<CR>', '<Plug>(neorg.itero.next-iteration)', { buffer = true })
   end,
 })
 
@@ -2016,7 +2014,7 @@ require('lazy').setup({
         load = {
           ['core.defaults'] = {},
           ['core.concealer'] = {},
-          ['core.itero'] = {},
+          -- ['core.itero'] = {},
           -- ['core.keybinds'] = {
           --   config = {
           --     hook = function(keys)
