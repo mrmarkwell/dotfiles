@@ -388,6 +388,11 @@ vim.api.nvim_create_autocmd('FileType', {
   callback = function()
     -- Create an autocommand to set keymaps only for 'norg' filetype
     require('cmp').setup.buffer({ enabled = false })
+
+    -- Wider notes makes sense in neorg.
+    vim.opt.textwidth = 120
+    vim.opt.colorcolumn = '121'
+
     -- This works but doesn't do exactly what I want.
     -- TODO: What's wrong with indenting in this filetype?
     -- vim.keymap.set('i', '<CR>', '<Plug>(neorg.itero.next-iteration)', { buffer = true })
