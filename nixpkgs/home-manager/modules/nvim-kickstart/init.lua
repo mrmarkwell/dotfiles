@@ -140,6 +140,14 @@ P.S. You can delete this when you're done too. It's your config now! :)
 vim.opt.nu = true
 vim.opt.relativenumber = true
 
+-- Disable backups. Backups are enabled by default and remove the original file
+-- and copy the backup over it when saving (:help backupcopy). This messes with
+-- iblaze and CiderLSP diagnostics. Another way to address this is setting
+-- backupdir to a folder outside CitC, and do `vim.o.backupcopy = "yes"`.
+vim.opt.backup = false
+vim.opt.writebackup = false
+vim.opt.updatetime = 250 -- Don't wait 4s to trigger CursorHold (highlighting).
+
 vim.opt.tabstop = 2
 vim.opt.softtabstop = 2
 vim.opt.shiftwidth = 2
@@ -168,7 +176,6 @@ vim.opt.scrolloff = 8
 vim.opt.signcolumn = 'yes'
 vim.opt.isfname:append('@-@')
 
-vim.opt.updatetime = 50
 vim.opt.colorcolumn = '81' -- Putting this at 81 since the 80 is the limit.
 
 -- set the current working directory every time moving to a buffer.
@@ -243,9 +250,6 @@ vim.opt.smartcase = true
 
 -- Keep signcolumn on by default
 vim.opt.signcolumn = 'yes'
-
--- Decrease update time
-vim.opt.updatetime = 250
 
 -- Decrease mapped sequence wait time
 -- Displays which-key popup sooner
@@ -393,9 +397,12 @@ vim.api.nvim_create_autocmd('FileType', {
     vim.opt.textwidth = 120
     vim.opt.colorcolumn = '121'
 
+    -- <C-Space> is used in neorg.
+    --vim.keymap.del('i', '<C-Space>')
+
     -- This works but doesn't do exactly what I want.
     -- TODO: What's wrong with indenting in this filetype?
-    -- vim.keymap.set('i', '<CR>', '<Plug>(neorg.itero.next-iteration)', { buffer = true })
+    -- vim.keymap.set('i', '<C-CR>', '<Plug>(neorg.itero.next-iteration)', { buffer = true })
   end,
 })
 
@@ -1429,7 +1436,7 @@ require('lazy').setup({
         }),
         sources = {
           -- Order matters here. Prioritize the useful stuff!
-          { name = 'nvim_ciderlsp', priority = 30 }, -- TODO: Not working.
+          { name = 'nvim_ciderlsp', priority = 30 },
           { name = 'nvim_lsp', priority = 20 },
           { name = 'luasnip', priority = 10 },
           { name = 'nvim_lua', priority = 1 },
@@ -1642,7 +1649,7 @@ require('lazy').setup({
       -- TODO: I'm not convinced treesitter is better than the default nvim indent capability.
       -- I do know that it sucks for Java, so disable that here. But I might want to just disable this alltogether.
       -- Look here first if there is any funky indentation issue.
-      indent = { enable = true, disable = { 'ruby', 'java' } },
+      -- indent = { enable = true, disable = { 'ruby', 'java' } },
     },
     config = function(_, opts)
       -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
@@ -2056,9 +2063,9 @@ require('lazy').setup({
             },
           },
           ['core.summary'] = {
-            config = {
-              strategy = 'by_path',
-            },
+            -- config = {
+            --   strategy = 'by_path',
+            -- },
           },
           ['core.dirman'] = {
             config = {
