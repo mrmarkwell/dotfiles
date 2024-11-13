@@ -1587,8 +1587,18 @@ require('lazy').setup({
     'rcarriga/nvim-notify',
     config = function()
       -- Use notify as the default 'notify' function.
-      vim.notify = require('notify')
-      vim.notify.setup({ timeout = 5000 })
+      -- Any messages we want filtered can be added here.
+      local banned_messages = { 'ciderlsp: 0: Workspace is too large for semantic functionality (see go/large-workspace).' }
+
+      vim.notify = function(msg, ...)
+        for _, banned in ipairs(banned_messages) do
+          if msg == banned then
+            return
+          end
+        end
+        require('notify')(msg, ...)
+      end
+      require('notify').setup({ timeout = 5000 })
     end,
   },
   -- Highlight todo, notes, etc in comments
