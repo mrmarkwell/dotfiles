@@ -323,23 +323,6 @@ vim.keymap.set(
   { desc = 'Dismiss highlights and notify messages silently when hitting <esc> in normal mode.', silent = true }
 )
 
--- Note that to fix line lengths, you need to highlight a section and type "gq"
-local indent_file = function()
-  -- Save current cursor position
-  local current_pos = vim.fn.getpos('.')
-
-  -- Fix indentation for the whole file.
-  vim.cmd('normal! gg=G')
-
-  -- Restore cursor position
-  vim.fn.setpos('.', current_pos)
-end
-
-vim.keymap.set('n', ',,', indent_file, { desc = '[i]ndent [f]ile', noremap = true, silent = true })
-vim.keymap.set('n', ',jt', ':Neorg journal today<CR>', { desc = 'Neorg [j]ournal [t]oday' })
-vim.keymap.set('n', ',ns', ':Neorg generate-workspace-summary<CR>', { desc = '[N]eorg [s]ummary' })
-vim.keymap.set('n', ',ji', ':Neorg journal toc update<CR>', { desc = '[J]ournal [i]ndex' })
-vim.keymap.set('n', ',ni', ':Neorg index<CR>', { desc = '[N]eorg [i]ndex' })
 vim.keymap.set('n', '<leader>config', '<cmd>e ~/.config/nvim/init.lua<CR>', { desc = 'Open Nvim [Config]' })
 vim.keymap.set('n', '<leader>gc', '<cmd>e ~/.config/nvim/lua/google.lua<CR>', { desc = 'Open Nvim [G]oogle [C]onfig' })
 
@@ -385,26 +368,6 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
   callback = function()
     vim.highlight.on_yank()
-  end,
-})
-
--- Specify the filetypes where you want to disable nvim-cmp
-vim.api.nvim_create_autocmd('FileType', {
-  pattern = { 'norg' }, -- List of filetypes
-  callback = function()
-    -- Create an autocommand to set keymaps only for 'norg' filetype
-    require('cmp').setup.buffer({ enabled = false })
-
-    -- Wider notes makes sense in neorg.
-    vim.opt.textwidth = 120
-    vim.opt.colorcolumn = '121'
-
-    -- <C-Space> is used in neorg.
-    --vim.keymap.del('i', '<C-Space>')
-
-    -- This works but doesn't do exactly what I want.
-    -- TODO: What's wrong with indenting in this filetype?
-    -- vim.keymap.set('i', '<C-CR>', '<Plug>(neorg.itero.next-iteration)', { buffer = true })
   end,
 })
 
@@ -1840,70 +1803,15 @@ require('lazy').setup({
     main = 'ibl',
     opts = {},
   },
-  --  {
-  --    -- Linting
-  --    'mfussenegger/nvim-lint',
-  --    event = { 'BufReadPre', 'BufNewFile' },
-  --    config = function()
-  --      -- local lint = require 'lint'
-  --      -- lint.linters_by_ft = {
-  --      --   markdown = { 'markdownlint' },
-  --      -- }
-  --      --
-  --      -- To allow other plugins to add linters to require('lint').linters_by_ft,
-  --      -- instead set linters_by_ft like this:
-  --      -- lint.linters_by_ft = lint.linters_by_ft or {}
-  --      -- lint.linters_by_ft['markdown'] = { 'markdownlint' }
-  --      --
-  --      -- However, note that this will enable a set of default linters,
-  --      -- which will cause errors unless these tools are available:
-  --      -- {
-  --      --   clojure = { "clj-kondo" },
-  --      --   dockerfile = { "hadolint" },
-  --      --   inko = { "inko" },
-  --      --   janet = { "janet" },
-  --      --   json = { "jsonlint" },
-  --      --   markdown = { "vale" },
-  --      --   rst = { "vale" },
-  --      --   ruby = { "ruby" },
-  --      --   terraform = { "tflint" },
-  --      --   text = { "vale" }
-  --      -- }
-  --      --
-  --      -- You can disable the default linters by setting their filetypes to nil:
-  --      -- lint.linters_by_ft['clojure'] = nil
-  --      -- lint.linters_by_ft['dockerfile'] = nil
-  --      -- lint.linters_by_ft['inko'] = nil
-  --      -- lint.linters_by_ft['janet'] = nil
-  --      -- lint.linters_by_ft['json'] = nil
-  --      -- lint.linters_by_ft['markdown'] = nil
-  --      -- lint.linters_by_ft['rst'] = nil
-  --      -- lint.linters_by_ft['ruby'] = nil
-  --      -- lint.linters_by_ft['terraform'] = nil
-  --      -- lint.linters_by_ft['text'] = nil
-  --
-  --      -- Create autocommand which carries out the actual linting
-  --      -- on the specified events.
-  --      local lint_augroup = vim.api.nvim_create_augroup('lint', { clear = true })
-  --      vim.api.nvim_create_autocmd({ 'BufEnter', 'BufWritePost', 'InsertLeave' }, {
-  --        group = lint_augroup,
-  --        callback = function()
-  --          require('lint').try_lint()
-  --        end,
-  --      })
-  --    end,
-  --  },
   -- NOTE: markwell's plugins start here (stuff not included in kickstart)
   {
-    -- Toggle formatted markdown view with :RenderMarkdownToggle
-    'MeanderingProgrammer/markdown.nvim',
-    name = 'render-markdown', -- Only needed if you have another plugin named markdown.nvim
-    dependencies = { 'nvim-treesitter/nvim-treesitter' },
-    config = function()
-      require('render-markdown').setup({})
-      -- This option no longer exists.
-      --vim.keymap.set('n', '<leader>md', '<Cmd>RenderMarkdownToggle<CR>', { desc = 'Toggle [M]ark[d]own' })
-    end,
+    'MeanderingProgrammer/render-markdown.nvim',
+    dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.nvim' }, -- if you use the mini.nvim suite
+    -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.icons' }, -- if you use standalone mini plugins
+    -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' }, -- if you prefer nvim-web-devicons
+    ---@module 'render-markdown'
+    ---@type render.md.UserConfig
+    opts = {},
   },
   {
     'tpope/vim-abolish',
@@ -2040,43 +1948,6 @@ require('lazy').setup({
         desc = 'Toggle Undotree',
       },
     },
-  },
-  -- Neorg is a note taking tool.
-  {
-    'nvim-neorg/neorg',
-    lazy = false,
-    version = '*',
-    config = function()
-      require('neorg').setup({
-        load = {
-          ['core.defaults'] = {},
-          ['core.concealer'] = {},
-          ['core.export'] = {},
-          ['core.qol.toc'] = {},
-          ['core.journal'] = {
-            config = {
-              strategy = 'flat',
-              --strategy = 'nested',
-            },
-          },
-          ['core.summary'] = {
-            -- config = {
-            --   strategy = 'by_path',
-            -- },
-          },
-          ['core.dirman'] = {
-            config = {
-              workspaces = {
-                notes = '~/notes',
-              },
-              default_workspace = 'notes',
-            },
-          },
-        },
-      })
-      vim.wo.foldlevel = 99
-      vim.wo.conceallevel = 2
-    end,
   },
   -- Import all the google plugins. Symlink a 'google.lua' into the lua folder.
   -- It can be empty for non-google configs.
