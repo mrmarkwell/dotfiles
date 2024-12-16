@@ -30,6 +30,7 @@ TODO:
 
 NOTE: Reminders of cool functionality.
 - Highlight a region and type 'gc' to toggle converting it into a comment.
+- Highlight some lines and type 'gq' to get them to abide by the textwidth of the current file.
 - :terminal opens a terminal in a buffer. 'i' to use it (terminal mode) and '<esc><esc>' to exit.
 - General
   - Use <ctrl>h, j, k, or l to switch between windows.
@@ -322,11 +323,12 @@ vim.keymap.set(
   { desc = 'Dismiss highlights and notify messages silently when hitting <esc> in normal mode.', silent = true }
 )
 
+-- Note that to fix line lengths, you need to highlight a section and type "gq"
 local indent_file = function()
   -- Save current cursor position
   local current_pos = vim.fn.getpos('.')
 
-  -- Run the indent command
+  -- Fix indentation for the whole file.
   vim.cmd('normal! gg=G')
 
   -- Restore cursor position
@@ -2049,22 +2051,7 @@ require('lazy').setup({
         load = {
           ['core.defaults'] = {},
           ['core.concealer'] = {},
-          -- ['core.itero'] = {},
-          -- ['core.keybinds'] = {
-          --   config = {
-          --     hook = function(keys)
-          --       keys.remap_event('norg', 'i', '<C-CR>', 'core.itero.next-iteration')
-          --       keys.remap_event('norg', 'n', '<C-CR>', 'core.itero.next-iteration')
-          --     end,
-          --   },
-          -- },
-          -- ['core.itero'] = {
-          --   config = {
-          --     mappings = {
-          --       next = '<CR>', -- Remap `next-iteration` to Ctrl-n
-          --     },
-          --   },
-          -- },
+          ['core.export'] = {},
           ['core.qol.toc'] = {},
           ['core.journal'] = {
             config = {
