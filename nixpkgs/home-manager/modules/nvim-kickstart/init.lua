@@ -50,94 +50,10 @@ NOTE: Reminders of cool functionality.
   - <leader>n and <leader>N to navigate diagnostic messages.
   - <leader>e to show the full error/diagnosic message on the current line.
   - <leader>l to open the quickfix list.
-
-The original kickstart comment header starts here.
-
-=====================================================================
-==================== READ THIS BEFORE CONTINUING ====================
-=====================================================================
-========                                    .-----.          ========
-========         .----------------------.   | === |          ========
-========         |.-""""""""""""""""""-.|   |-----|          ========
-========         ||                    ||   | === |          ========
-========         ||   KICKSTART.NVIM   ||   |-----|          ========
-========         ||                    ||   | === |          ========
-========         ||                    ||   |-----|          ========
-========         ||:Tutor              ||   |:::::|          ========
-========         |'-..................-'|   |____o|          ========
-========         `"")----------------(""`   ___________      ========
-========        /::::::::::|  |::::::::::\  \ no mouse \     ========
-========       /:::========|  |==hjkl==:::\  \ required \    ========
-
-========      '""""""""""""'  '""""""""""""'  '""""""""""'   ========
-========                                                     ========
-=====================================================================
-=====================================================================
-
-What is Kickstart?
-
-  Kickstart.nvim is *not* a distribution.
-
-  Kickstart.nvim is a starting point for your own configuration.
-    The goal is that you can read every line of code, top-to-bottom, understand
-    what your configuration is doing, and modify it to suit your needs.
-
-    Once you've done that, you can start exploring, configuring and tinkering to
-    make Neovim your own! That might mean leaving Kickstart just the way it is for a while
-    or immediately breaking it into modular pieces. It's up to you!
-
-    If you don't know anything about Lua, I recommend taking some time to read through
-    a guide. One possible example which will only take 10-15 minutes:
-      - https://learnxinyminutes.com/docs/lua/
-
-    After understanding a bit more about Lua, you can use `:help lua-guide` as a
-    reference for how Neovim integrates Lua.
-    - :help lua-guide
-    - (or HTML version): https://neovim.io/doc/user/lua-guide.html
-
-Kickstart Guide:
-
-  TODO: The very first thing you should do is to run the command `:Tutor` in Neovim.
-
-    If you don't know what this means, type the following:
-      - <escape key>
-      - :
-      - Tutor
-      - <enter key>
-
-    (If you already know the Neovim basics, you can skip this step.)
-
-  Once you've completed that, you can continue working through **AND READING** the rest
-  of the kickstart init.lua.
-
-  Next, run AND READ `:help`.
-    This will open up a help window with some basic information
-    about reading, navigating and searching the builtin help documentation.
-
-    This should be the first place you go to look when you're stuck or confused
-    with something. It's one of my favorite Neovim features.
-
-    MOST IMPORTANTLY, we provide a keymap "<space>help" to search the [help] documentation,
-    which is very useful when you're not exactly sure of what you're looking for.
-
-  I have left several `:help X` comments throughout the init.lua
-    These are hints about where to find more information about the relevant settings,
-    plugins or Neovim features used in Kickstart.
-
-   NOTE: Look for lines like this
-
-    Throughout the file. These are for you, the reader, to help you understand what is happening.
-    Feel free to delete them once you know what you're doing, but they should serve as a guide
-    for when you are first encountering a few different constructs in your Neovim config.
-
-If you experience any errors while trying to install kickstart, run `:checkhealth` for more info.
-
-I hope you enjoy your Neovim journey,
-- TJ
-
-P.S. You can delete this when you're done too. It's your config now! :)
 --]]
+
 -- NOTE: markwell's settings:
+
 vim.opt.nu = true
 vim.opt.relativenumber = true
 
@@ -222,12 +138,6 @@ vim.g.have_nerd_font = true
 -- NOTE: You can change these options as you wish!
 --  For more options, you can see `:help option-list`
 
--- Make line numbers default
-vim.opt.number = true
--- You can also add relative line numbers, to help with jumping.
---  Experiment for yourself to see if you like it!
--- vim.opt.relativenumber = true
-
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.opt.mouse = 'a'
 
@@ -235,9 +145,12 @@ vim.opt.mouse = 'a'
 vim.opt.showmode = false
 
 -- Sync clipboard between OS and Neovim.
+--  Schedule the setting after `UiEnter` because it can increase startup-time.
 --  Remove this option if you want your OS clipboard to remain independent.
 --  See `:help 'clipboard'`
-vim.opt.clipboard = 'unnamedplus'
+vim.schedule(function()
+  vim.opt.clipboard = 'unnamedplus'
+end)
 
 -- Enable break indent
 vim.opt.breakindent = true
@@ -457,96 +370,10 @@ local find_history = function()
   })
 end
 
--- Searches for the name of the current file in the file |filename|.
-local find_current_filename_in_file = function(filename)
-  local lines = vim.fn.readfile(filename)
-  local current_filename = vim.fn.expand('%:t')
-  for linenum, line in ipairs(lines) do
-    if string.match(line, current_filename) then
-      return linenum
-    end
-  end
-  return 0
-end
-
 local grep_dir = function()
   require('telescope.builtin').live_grep({
     prompt_title = 'grep Directory',
   })
-end
-
--- Returns a table of files related to the current file (e.g. BUILD, tests,
--- etc.). Each entry in the table is a table containing the name of the related
--- file and the relevant line number.
-local get_related_files = function()
-  local related_files = {}
-  local current_dir = vim.fn.expand('%:h')
-  local current_filename = vim.fn.expand('%')
-  local files_to_find = {
-    -- BUILD file.
-    current_dir .. '/BUILD',
-    -- Source files.
-    string.gsub(current_filename, '_test%.(%w+)', '.%1'),
-    string.gsub(current_filename, '_tests%.(%w+)', '.%1'),
-    -- Test files.
-    string.gsub(current_filename, '%.(%w+)', '_test.%1'),
-    string.gsub(current_filename, '%.(%w+)', '_tests.%1'),
-  }
-  for _, filename in ipairs(files_to_find) do
-    if filename ~= current_filename and vim.fn.filereadable(filename) == 1 then
-      local cwd = vim.fn.getcwd() .. '/'
-      local relative_filename = string.gsub(filename, cwd, '')
-      -- In BUILD files, search for current file's BUILD rule to jump to that
-      -- line directly.
-      local lnum = 0
-      if string.find(filename, 'BUILD') ~= nil then
-        lnum = find_current_filename_in_file(filename)
-      end
-      table.insert(related_files, {
-        filename = relative_filename,
-        lnum = lnum,
-      })
-    end
-  end
-  return related_files
-end
-
-local find_related = function()
-  local action_state = require('telescope.actions.state')
-  local action_set = require('telescope.actions.set')
-  local config = require('telescope.config').values
-  local finders = require('telescope.finders')
-  local pickers = require('telescope.pickers')
-  local opts = {}
-  pickers
-    .new(opts, {
-      prompt_title = 'Find in Related Files',
-      previewer = config.grep_previewer(opts),
-      sorter = config.generic_sorter(opts),
-      finder = finders.new_table({
-        results = get_related_files(),
-        entry_maker = function(entry)
-          return {
-            value = entry.filename,
-            ordinal = entry.filename,
-            display = entry.filename,
-            lnum = entry.lnum,
-          }
-        end,
-      }),
-      attach_mappings = function()
-        action_set.select:enhance({
-          post = function()
-            local selection = action_state.get_selected_entry()
-            if selection.lnum ~= 0 then
-              vim.api.nvim_win_set_cursor(0, { selection.lnum, 0 })
-            end
-          end,
-        })
-        return true
-      end,
-    })
-    :find()
 end
 
 -- Helper function for a scoped grep search with telescope.
@@ -770,9 +597,6 @@ require('lazy').setup({
         end,
       },
       { 'nvim-telescope/telescope-ui-select.nvim' },
-
-      -- Useful for getting pretty icons, but requires a Nerd Font.
-      { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
     },
     cmd = 'Telescope',
     config = function()
@@ -797,9 +621,6 @@ require('lazy').setup({
 
       -- [[ Configure Telescope ]]
       -- See `:help telescope` and `:help telescope.setup()`
-      -- TODO: Telescope is not looking good. I preferred the way it worked before.
-      -- Also, my custom telescope search paths aren't working either.
-      -- Investigate...
       require('telescope').setup({
         defaults = {
           file_ignore_patterns = {
@@ -886,7 +707,6 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>st', '<Cmd>Telescope treesitter<CR>', { desc = '[S]earch [T]reesitter symbols' })
       vim.keymap.set('n', '<leader>fh', find_history, { desc = '[F]ind in [H]istory' })
       vim.keymap.set('n', '<leader>fp', find_files_current_directory, { desc = '[F]ind in [P]roject (current directory)' })
-      vim.keymap.set('n', '<leader>fr', find_related, { desc = 'Open from related files' })
 
       -- Slightly advanced example of overriding default behavior and theme
       vim.keymap.set('n', '<leader>/', function()
@@ -913,7 +733,7 @@ require('lazy').setup({
     event = 'BufReadPre',
     dependencies = {
       -- Automatically install LSPs and related tools to stdpath for Neovim
-      'williamboman/mason.nvim',
+      { 'williamboman/mason.nvim', config = true }, -- NOTE: Must be loaded before dependants
       'williamboman/mason-lspconfig.nvim',
       'WhoIsSethDaniel/mason-tool-installer.nvim',
 
@@ -924,17 +744,18 @@ require('lazy').setup({
       -- `lazydev` configures Lua LSP for your Neovim config, runtime and plugins
       -- used for completion, annotations and signatures of Neovim apis
       {
+        -- `lazydev` configures Lua LSP for your Neovim config, runtime and plugins
+        -- used for completion, annotations and signatures of Neovim apis
         'folke/lazydev.nvim',
-        ft = 'lua', -- only load on lua files
+        ft = 'lua',
         opts = {
           library = {
-            -- See the configuration section for more details
             -- Load luvit types when the `vim.uv` word is found
             { path = 'luvit-meta/library', words = { 'vim%.uv' } },
           },
         },
       },
-      { 'Bilal2453/luvit-meta', lazy = true }, -- optional `vim.uv` typings
+      { 'Bilal2453/luvit-meta', lazy = true },
     },
     config = function()
       -- Brief aside: **What is LSP?**
@@ -1009,7 +830,7 @@ require('lazy').setup({
 
           -- Execute a code action, usually your cursor needs to be on top of an error
           -- or a suggestion from your LSP for this to activate.
-          map('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
+          map('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction', { 'n', 'x' })
 
           -- Opens a popup that displays documentation about the word under your cursor
           --  See `:help K` for why this keymap.
@@ -1410,34 +1231,6 @@ require('lazy').setup({
           { name = 'buffer', max_item_count = 3, priority = 1 },
           { name = 'nvim_lsp_signature_help', priority = 1 },
         },
-        -- sorting = {
-        --   comparators = {
-        --     -- Default comparators for nvim-cmp
-        --     -- https://github.com/hrsh7th/nvim-cmp/blob/main/lua/cmp/config/default.lua#L67-L78
-        --     cmp.config.compare.offset,
-        --     cmp.config.compare.exact,
-        --     -- cmp.config.compare.scopes,
-        --     cmp.config.compare.score,
-        --     -- Rank items that start with "_", lower. i.e. private fields and methods.
-        --     function(entry1, entry2)
-        --       local _, entry1_under = entry1.completion_item.label:find('^_+')
-        --       local _, entry2_under = entry2.completion_item.label:find('^_+')
-        --       entry1_under = entry1_under or 0
-        --       entry2_under = entry2_under or 0
-        --       if entry1_under > entry2_under then
-        --         return false
-        --       elseif entry1_under < entry2_under then
-        --         return true
-        --       end
-        --     end,
-        --     cmp.config.compare.recently_used,
-        --     cmp.config.compare.locality,
-        --     cmp.config.compare.kind,
-        --     -- cmp.config.compare.sort_text,
-        --     cmp.config.compare.length,
-        --     cmp.config.compare.order,
-        --   },
-        -- },
         experimental = {
           -- TODO: I think this might be necessary for ML completions.
           --ghost_text = true,
@@ -1539,15 +1332,7 @@ require('lazy').setup({
     'mofiqul/vscode.nvim',
     lazy = true,
   },
-  {
-    'morhetz/gruvbox',
-    lazy = true,
-    config = function()
-      vim.g.gruvbox_contrast_dark = 'hard'
-      vim.g.gruvbox_invert_selection = false
-      vim.g.gruvbox_sign_column = 'bg0'
-    end,
-  },
+  -- TODO: Replace with Snacks.Notify
   {
     'rcarriga/nvim-notify',
     config = function()
@@ -1580,13 +1365,6 @@ require('lazy').setup({
       --  - ci'  - [C]hange [I]nside [']quote
       require('mini.ai').setup({ n_lines = 500 })
 
-      -- Add/delete/replace surroundings (brackets, quotes, etc.)
-      --
-      -- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
-      -- - sd'   - [S]urround [D]elete [']quotes
-      -- - sr)'  - [S]urround [R]eplace [)] [']
-      -- require('mini.surround').setup() -- I don't like surround.
-
       -- Simple and easy statusline.
       --  You could remove this setup call if you don't like it,
       --  and try some other statusline plugin
@@ -1616,182 +1394,13 @@ require('lazy').setup({
       auto_install = true,
       highlight = {
         enable = true,
-        -- Some languages depend on vim's regex highlighting system (such as Ruby) for indent rules.
-        --  If you are experiencing weird indenting issues, add the language to
-        --  the list of additional_vim_regex_highlighting and disabled languages for indent.
-        additional_vim_regex_highlighting = { 'ruby' },
       },
-      -- TODO: I'm not convinced treesitter is better than the default nvim indent capability.
-      -- I do know that it sucks for Java, so disable that here. But I might want to just disable this alltogether.
-      -- Look here first if there is any funky indentation issue.
-      -- indent = { enable = true, disable = { 'ruby', 'java' } },
     },
     config = function(_, opts)
       -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
 
       ---@diagnostic disable-next-line: missing-fields
       require('nvim-treesitter.configs').setup(opts)
-
-      -- There are additional nvim-treesitter modules that you can use to interact
-      -- with nvim-treesitter. You should go explore a few and see what interests you:
-      --
-      --    - Incremental selection: Included, see `:help nvim-treesitter-incremental-selection-mod`
-      --    - Show your current context: https://github.com/nvim-treesitter/nvim-treesitter-context
-      --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
-    end,
-  },
-  {
-    'folke/trouble.nvim',
-    dependencies = 'kyazdani42/nvim-web-devicons',
-    event = 'VeryLazy',
-    config = function()
-      require('trouble').setup({
-        position = 'bottom', -- position of the list can be: bottom, top, left, right
-        height = 10, -- height of the trouble list when position is top or bottom
-        width = 50, -- width of the list when position is left or right
-        icons = true, -- use devicons for filenames
-        mode = 'workspace_diagnostics', -- "workspace_diagnostics", "document_diagnostics", "quickfix", "lsp_references", "loclist"
-        fold_open = '', -- icon used for open folds
-        fold_closed = '', -- icon used for closed folds
-        group = true, -- group results by file
-        padding = true, -- add an extra new line on top of the list
-        action_keys = {
-          -- key mappings for actions in the trouble list
-          -- map to {} to remove a mapping, for example:
-          -- close = {},
-          close = 'q', -- close the list
-          cancel = '<esc>', -- cancel the preview and get back to your last window / buffer / cursor
-          refresh = 'r', -- manually refresh
-          jump = { '<cr>', '<tab>' }, -- jump to the diagnostic or open / close folds
-          open_split = { '<c-x>' }, -- open buffer in new split
-          open_vsplit = { '<c-v>' }, -- open buffer in new vsplit
-          open_tab = { '<c-t>' }, -- open buffer in new tab
-          jump_close = { 'o' }, -- jump to the diagnostic and close the list
-          toggle_mode = 'm', -- toggle between "workspace" and "document" diagnostics mode
-          toggle_preview = 'P', -- toggle auto_preview
-          hover = 'K', -- opens a small popup with the full multiline message
-          preview = 'p', -- preview the diagnostic location
-          close_folds = { 'zM', 'zm' }, -- close all folds
-          open_folds = { 'zR', 'zr' }, -- open all folds
-          toggle_fold = { 'zA', 'za' }, -- toggle fold of current file
-          previous = 'k', -- preview item
-          next = 'j', -- next item
-        },
-        indent_lines = true, -- add an indent guide below the fold icons
-        auto_open = false, -- automatically open the list when you have diagnostics
-        auto_close = false, -- automatically close the list when you have no diagnostics
-        auto_preview = true, -- automatically preview the location of the diagnostic. <esc> to close preview and go back to last window
-        auto_fold = false, -- automatically fold a file trouble list at creation
-        auto_jump = { 'lsp_definitions' }, -- for the given modes, automatically jump if there is only a single result
-        signs = {
-          -- icons / text used for a diagnostic
-          error = '',
-          warning = '',
-          hint = '',
-          information = '',
-          other = '',
-        },
-        use_diagnostic_signs = false, -- enabling this will use the signs defined in your lsp client
-      })
-    end,
-    keys = {
-      { '<leader>d', desc = 'Diagnostics (Trouble)' },
-      { '<leader>dt', '<cmd>TroubleToggle<CR>', desc = 'Trouble Toggle' },
-      { '<leader>dw', '<cmd>Trouble workspace_diagnostics<CR>', desc = 'Trouble Workspace Diagnostics' },
-      { '<leader>dd', '<cmd>Trouble document_diagnostics<CR>', desc = 'Trouble Doc Diagnostics' },
-      { '<leader>dl', '<cmd>Trouble loclist<CR>', desc = 'Trouble Loclist' },
-      { '<leader>dq', '<cmd>Trouble quickfix<CR>', desc = 'Trouble Quickfix' },
-      { '<leader>dk', vim.diagnostic.open_float, desc = 'Open Diagnostic Float' },
-    },
-  },
-  {
-    -- debug.lua
-    --
-    -- Shows how to use the DAP plugin to debug your code.
-    --
-    -- Primarily focused on configuring the debugger for Go, but can
-    -- be extended to other languages as well. That's why it's called
-    -- kickstart.nvim and not kitchen-sink.nvim ;)
-
-    -- NOTE: Yes, you can install new plugins here!
-    'mfussenegger/nvim-dap',
-    -- NOTE: And you can specify dependencies as well
-    dependencies = {
-      -- Creates a beautiful debugger UI
-      'rcarriga/nvim-dap-ui',
-
-      -- Required dependency for nvim-dap-ui
-      'nvim-neotest/nvim-nio',
-
-      -- Installs the debug adapters for you
-      'williamboman/mason.nvim',
-      'jay-babu/mason-nvim-dap.nvim',
-
-      -- Add your own debuggers here
-      'leoluz/nvim-dap-go',
-    },
-    config = function()
-      local dap = require('dap')
-      local dapui = require('dapui')
-
-      require('mason-nvim-dap').setup({
-        -- Makes a best effort to setup the various debuggers with
-        -- reasonable debug configurations
-        automatic_setup = true,
-
-        -- You can provide additional configuration to the handlers,
-        -- see mason-nvim-dap README for more information
-        handlers = {},
-
-        -- You'll need to check that you have the required things installed
-        -- online, please don't ask me how to install them :)
-        ensure_installed = {
-          -- Update this to ensure that you have the debuggers for the langs you want
-          --'delve', -- This is the GO debugger.
-        },
-      })
-
-      -- Basic debugging keymaps, feel free to change to your liking!
-      vim.keymap.set('n', '<F5>', dap.continue, { desc = 'Debug: Start/Continue' })
-      vim.keymap.set('n', '<F1>', dap.step_into, { desc = 'Debug: Step Into' })
-      vim.keymap.set('n', '<F2>', dap.step_over, { desc = 'Debug: Step Over' })
-      vim.keymap.set('n', '<F3>', dap.step_out, { desc = 'Debug: Step Out' })
-      vim.keymap.set('n', '<leader>b', dap.toggle_breakpoint, { desc = 'Debug: Toggle Breakpoint' })
-      vim.keymap.set('n', '<leader>B', function()
-        dap.set_breakpoint(vim.fn.input('Breakpoint condition: '))
-      end, { desc = 'Debug: Set Breakpoint' })
-
-      -- Dap UI setup
-      -- For more information, see |:help nvim-dap-ui|
-      dapui.setup({
-        -- Set icons to characters that are more likely to work in every terminal.
-        --    Feel free to remove or use ones that you like more! :)
-        --    Don't feel like these are good choices.
-        icons = { expanded = '▾', collapsed = '▸', current_frame = '*' },
-        controls = {
-          icons = {
-            pause = '⏸',
-            play = '▶',
-            step_into = '⏎',
-            step_over = '⏭',
-            step_out = '⏮',
-            step_back = 'b',
-            run_last = '▶▶',
-            terminate = '⏹',
-            disconnect = '⏏',
-          },
-        },
-      })
-
-      -- Toggle to see last session result. Without this, you can't see session output in case of unhandled exception.
-      vim.keymap.set('n', '<F7>', dapui.toggle, { desc = 'Debug: See last session result.' })
-
-      dap.listeners.after.event_initialized['dapui_config'] = dapui.open
-      dap.listeners.before.event_terminated['dapui_config'] = dapui.close
-      dap.listeners.before.event_exited['dapui_config'] = dapui.close
-
-      -- Install golang specific config
-      require('dap-go').setup()
     end,
   },
   {
@@ -1812,29 +1421,6 @@ require('lazy').setup({
     ---@module 'render-markdown'
     ---@type render.md.UserConfig
     opts = {},
-  },
-  {
-    'tpope/vim-abolish',
-    cmd = { 'S', 'Subvert' },
-    keys = 'cr',
-    config = function()
-      -- Register mappings with WhichKey.
-      local loaded, wk = pcall(require, 'which-key')
-      if loaded then
-        wk.register({
-          ['cr'] = {
-            name = 'coerce',
-            ['<Space>'] = 'to space case',
-            ['.'] = 'to.dot.case',
-            ['-'] = 'to-dash-case',
-            c = 'toCamelCase',
-            m = 'ToMixedCase',
-            s = 'to_snake_case',
-            u = 'TO_UPPER_SNAKE_CASE',
-          },
-        })
-      end
-    end,
   },
   {
     -- Netrw replacement.
