@@ -232,7 +232,7 @@ vim.opt.hlsearch = true
 vim.keymap.set(
   'n',
   '<esc>',
-  '<esc>:noh<CR>:lua require("notify").dismiss()<CR>',
+  '<esc>:noh<CR>:lua Snacks.notifier.hide()<CR>',
   { desc = 'Dismiss highlights and notify messages silently when hitting <esc> in normal mode.', silent = true }
 )
 
@@ -1333,24 +1333,24 @@ require('lazy').setup({
     lazy = true,
   },
   -- TODO: Replace with Snacks.Notify
-  {
-    'rcarriga/nvim-notify',
-    config = function()
-      -- Use notify as the default 'notify' function.
-      -- Any messages we want filtered can be added here.
-      local banned_messages = { 'ciderlsp: 0: Workspace is too large for semantic functionality (see go/large-workspace).' }
-
-      vim.notify = function(msg, ...)
-        for _, banned in ipairs(banned_messages) do
-          if msg == banned then
-            return
-          end
-        end
-        require('notify')(msg, ...)
-      end
-      require('notify').setup({ timeout = 5000 })
-    end,
-  },
+  -- {
+  --   'rcarriga/nvim-notify',
+  --   config = function()
+  --     -- Use notify as the default 'notify' function.
+  --     -- Any messages we want filtered can be added here.
+  --     local banned_messages = { 'ciderlsp: 0: Workspace is too large for semantic functionality (see go/large-workspace).' }
+  --
+  --     vim.notify = function(msg, ...)
+  --       for _, banned in ipairs(banned_messages) do
+  --         if msg == banned then
+  --           return
+  --         end
+  --       end
+  --       require('notify')(msg, ...)
+  --     end
+  --     require('notify').setup({ timeout = 5000 })
+  --   end,
+  -- },
   -- Highlight todo, notes, etc in comments
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
   {
@@ -1382,7 +1382,72 @@ require('lazy').setup({
 
       -- ... and there is more!
       --  Check out: https://github.com/echasnovski/mini.nvim
+      require('mini.icons').setup({
+        opts = {},
+        lazy = true,
+        -- Use mini.nvim instead of nvim-web-devicons.
+        specs = {
+          { 'nvim-tree/nvim-web-devicons', enabled = false, optional = true },
+        },
+        init = function()
+          package.preload['nvim-web-devicons'] = function()
+            require('mini.icons').mock_nvim_web_devicons()
+            return package.loaded['nvim-web-devicons']
+          end
+        end,
+      })
     end,
+  },
+  {
+    'folke/snacks.nvim',
+    priority = 1000,
+    lazy = false,
+    ---@type snacks.Config
+    opts = {
+      -- your configuration comes here
+      -- or leave it empty to use the default settings
+      -- refer to the configuration section below
+      animate = { enabled = false },
+      bigfile = { enabled = true },
+      dashboard = {
+        enabled = true,
+        sections = {
+          { section = 'header' },
+          {
+            pane = 2,
+            section = 'terminal',
+            cmd = 'fortune | cowsay -f $(ls -d ~/dotfiles/cows/* | shuf -n1)',
+            height = 5,
+            padding = 1,
+          },
+          { section = 'keys', gap = 1, padding = 1 },
+          { pane = 2, icon = ' ', title = 'Recent Files', section = 'recent_files', indent = 2, padding = 1 },
+          { pane = 2, icon = ' ', title = 'Projects', section = 'projects', indent = 2, padding = 1 },
+          {
+            pane = 2,
+            icon = ' ',
+            title = 'Git Status',
+            section = 'terminal',
+            enabled = function()
+              return Snacks.git.get_root() ~= nil
+            end,
+            cmd = 'git status --short --branch --renames',
+            height = 5,
+            padding = 1,
+            ttl = 5 * 60,
+            indent = 3,
+          },
+          { section = 'startup' },
+        },
+      },
+      indent = { enabled = false },
+      input = { enabled = true },
+      notifier = { enabled = true },
+      quickfile = { enabled = true },
+      scroll = { enabled = false },
+      statuscolumn = { enabled = true },
+      words = { enabled = true },
+    },
   },
   {
     -- Highlight, edit, and navigate code
@@ -1416,8 +1481,6 @@ require('lazy').setup({
   {
     'MeanderingProgrammer/render-markdown.nvim',
     dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.nvim' }, -- if you use the mini.nvim suite
-    -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.icons' }, -- if you use standalone mini plugins
-    -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' }, -- if you prefer nvim-web-devicons
     ---@module 'render-markdown'
     ---@type render.md.UserConfig
     opts = {},
@@ -1427,14 +1490,12 @@ require('lazy').setup({
     'stevearc/oil.nvim',
     opts = {},
     -- Optional dependencies
-    dependencies = { 'nvim-tree/nvim-web-devicons' },
     config = function()
       require('oil').setup()
     end,
   },
   {
     'akinsho/bufferline.nvim',
-    dependencies = { 'nvim-tree/nvim-web-devicons' },
     opts = {
       options = {
         custom_filter = function(buf_number)
