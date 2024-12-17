@@ -29,14 +29,14 @@ TODO:
 - Investigate folds.
 
 NOTE: Reminders of cool functionality.
-- Highlight a region and type 'gc' to toggle converting it into a comment.
-- Highlight some lines and type 'gq' to get them to abide by the textwidth of the current file.
-- :terminal opens a terminal in a buffer. 'i' to use it (terminal mode) and '<esc><esc>' to exit.
 - General
   - Use <ctrl>h, j, k, or l to switch between windows.
   - <leader>config to open nvim config in a new buffer.
   - <leader>gc to open nvim google config in a new buffer.
   - <leader>o -> repoen [O]ld file (most recent buffer that isn't already open)
+  - gc -> toggle comment on highlighted region.
+  - :terminal to open a terminal (not yet set up).
+  - gq -> restructure highlighted region to abide by `textwidth`.
 - Telescope
   - <leader>help -> search [help]
   - leader>sr -> reopen telescope [S]earch [R]esume.
@@ -1237,7 +1237,12 @@ require('lazy').setup({
         },
         -- Disable inside comments. Autocomplete in comments is super annoying!
         enabled = function()
-          if require('cmp.config.context').in_treesitter_capture('comment') == true or require('cmp.config.context').in_syntax_group('Comment') then
+          -- Disable for some filetypes too.
+          local cmp_disabled_filetypes = { 'markdown' }
+          local current_filetype = vim.bo.filetype
+          if contains(cmp_disabled_filetypes, current_filetype) then
+            return false
+          elseif require('cmp.config.context').in_treesitter_capture('comment') == true or require('cmp.config.context').in_syntax_group('Comment') then
             return false
           else
             return true
