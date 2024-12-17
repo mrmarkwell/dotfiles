@@ -707,6 +707,8 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>st', '<Cmd>Telescope treesitter<CR>', { desc = '[S]earch [T]reesitter symbols' })
       vim.keymap.set('n', '<leader>fh', find_history, { desc = '[F]ind in [H]istory' })
       vim.keymap.set('n', '<leader>fp', find_files_current_directory, { desc = '[F]ind in [P]roject (current directory)' })
+      vim.keymap.set('n', '<leader>fr', builtin.resume, { desc = '[F]ind [R]esume' })
+      -- vim.keymap.set('n', '<leader>fr', find_related, { desc = 'Open from related files' })
 
       -- Slightly advanced example of overriding default behavior and theme
       vim.keymap.set('n', '<leader>/', function()
