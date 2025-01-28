@@ -233,6 +233,7 @@ vim.keymap.set(
   'n',
   '<esc>',
   '<esc>:noh<CR>:lua Snacks.notifier.hide()<CR>',
+  -- '<esc>:noh<CR>:lua require("notify").dismiss()<CR>',
   { desc = 'Dismiss highlights and notify messages silently when hitting <esc> in normal mode.', silent = true }
 )
 
@@ -351,6 +352,16 @@ end
 local function contains(list, var)
   for _, value in ipairs(list) do
     if value == var then
+      return true
+    end
+  end
+  return false
+end
+
+-- Helper function that checks if a string contains any of the substrings.
+local function contains_any(target, substrings)
+  for _, substring in ipairs(substrings) do
+    if string.find(target, substring, 1, true) then
       return true
     end
   end
@@ -1345,15 +1356,18 @@ require('lazy').setup({
   --   config = function()
   --     -- Use notify as the default 'notify' function.
   --     -- Any messages we want filtered can be added here.
-  --     local banned_messages = { 'ciderlsp: 0: Workspace is too large for semantic functionality (see go/large-workspace).' }
+  --     local banned_messages = {
+  --       'ciderlsp: 0: Workspace is too large for semantic functionality (see go/large-workspace).',
+  --       'ciderlsp: 0: DocumentHighlight is not supported for build',
+  --     }
   --
   --     vim.notify = function(msg, ...)
-  --       for _, banned in ipairs(banned_messages) do
-  --         if msg == banned then
-  --           return
-  --         end
+  --       if contains_any(msg, banned_messages) then
+  --         return
   --       end
-  --       require('notify')(msg, ...)
+  --
+  --       require('snacks').notifier.notify(msg, ...)
+  --       --require('notify')(msg, ...)
   --     end
   --     require('notify').setup({ timeout = 5000 })
   --   end,
@@ -1627,6 +1641,26 @@ require('lazy').setup({
     },
   },
 })
+
+local setup_notify = function()
+  -- Use notify as the default 'notify' function.
+  -- Any messages we want filtered can be added here.
+  local banned_messages = {
+    'ciderlsp: 0: Workspace is too large for semantic functionality (see go/large-workspace).',
+    'ciderlsp: 0: DocumentHighlight is not supported for build',
+  }
+
+  vim.notify = function(msg, ...)
+    if contains_any(msg, banned_messages) then
+      return
+    end
+
+    require('snacks').notifier.notify(msg, ...)
+    --require('notify')(msg, ...)
+  end
+end
+
+setup_notify()
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
