@@ -37,6 +37,8 @@ NOTE: Reminders of cool functionality.
   - gc -> toggle comment on highlighted region.
   - :terminal to open a terminal (not yet set up).
   - gq -> restructure highlighted region to abide by `textwidth`.
+  - After searching, dgn deletes the current highlighted match and goes to next.
+    - This can be done repeatedly with "."
 - Telescope
   - <leader>help -> search [help]
   - leader>sr -> reopen telescope [S]earch [R]esume.
@@ -358,6 +360,26 @@ local function contains(list, var)
   return false
 end
 
+-- Helper function that lets telescope open more than one file.
+local select_one_or_multi = function(prompt_bufnr)
+  local picker = require('telescope.actions.state').get_current_picker(prompt_bufnr)
+  local multi = picker:get_multi_selection()
+  if not vim.tbl_isempty(multi) then
+    require('telescope.actions').close(prompt_bufnr)
+    for _, j in pairs(multi) do
+      if j.path ~= nil then
+        if j.lnum ~= nil then
+          vim.cmd(string.format('%s +%s %s', 'edit', j.lnum, j.path))
+        else
+          vim.cmd(string.format('%s %s', 'edit', j.path))
+        end
+      end
+    end
+  else
+    require('telescope.actions').select_default(prompt_bufnr)
+  end
+end
+
 -- Helper function that checks if a string contains any of the substrings.
 local function contains_any(target, substrings)
   for _, substring in ipairs(substrings) do
@@ -652,33 +674,38 @@ require('lazy').setup({
           -- Common paths in google3 repos are collapsed following the example of Cider
           -- It is nice to keep this as a user config rather than part of
           -- telescope-codesearch because it can be reused by other telescope pickers.
-          path_display = function(opts, path)
-            -- Do common substitutions
-            path = path:gsub('^/google/src/cloud/[^/]+/[^/]+/google3/', '~/google3/', 1)
-            path = path:gsub('^/google/src/cloud/[^/]+/[^/]+/google3/', '~/google3/', 1)
-            path = path:gsub('^/usr/local/google/home/markwell/android/', '~/android/', 1)
-            path = path:gsub('^/usr/local/google/home/markwell/aoc/', '~/aoc/', 1)
-            path = path:gsub('^/usr/local/google/home/markwell/', '~/', 1)
-            path = path:gsub('^~/repos/aoc/', '~/aoc/', 1)
-            path = path:gsub('^~/repos/master/', '~/android/', 1)
-
-            -- Do truncation. This allows us to combine our custom display formatter
-            -- with the built-in truncation.
-            -- `truncate` handler in transform_path memoizes computed truncation length in opts.__length.
-            -- Here we are manually propagating this value between new_opts and opts.
-            -- We can make this cleaner and more complicated using metatables :)
-            local new_opts = {
-              path_display = {
-                truncate = 3,
-              },
-              __length = opts.__length,
-            }
-            path = require('telescope.utils').transform_path(new_opts, path)
-            opts.__length = new_opts.__length
-            return path
-          end,
+          path_display = { 'smart' },
+          -- path_display = function(opts, path)
+          --   -- Do common substitutions
+          --   path = path:gsub('^/google/src/cloud/[^/]+/[^/]+/google3/', '~/google3/', 1)
+          --   path = path:gsub('~/google3/java/com/google/android/apps/aicore', 'aicore/', 1)
+          --   path = path:gsub('^/usr/local/google/home/markwell/android/', '~/android/', 1)
+          --   path = path:gsub('^/usr/local/google/home/markwell/aoc/', '~/aoc/', 1)
+          --   path = path:gsub('^/usr/local/google/home/markwell/', '~/', 1)
+          --   path = path:gsub('^~/repos/aoc/', '~/aoc/', 1)
+          --   path = path:gsub('^~/repos/master/', '~/android/', 1)
+          --
+          --   -- Do truncation. This allows us to combine our custom display formatter
+          --   -- with the built-in truncation.
+          --   -- `truncate` handler in transform_path memoizes computed truncation length in opts.__length.
+          --   -- Here we are manually propagating this value between new_opts and opts.
+          --   -- We can make this cleaner and more complicated using metatables :)
+          --   local new_opts = {
+          --     path_display = {
+          --       truncate = 3,
+          --     },
+          --     __length = opts.__length,
+          --   }
+          --   path = require('telescope.utils').transform_path(new_opts, path)
+          --   opts.__length = new_opts.__length
+          --   return path
+          -- end,
           mappings = {
+            i = {
+              ['<CR>'] = select_one_or_multi,
+            },
             n = {
+              ['<CR>'] = select_one_or_multi,
               p = require('telescope.actions.layout').toggle_preview,
             },
           },
@@ -706,13 +733,18 @@ require('lazy').setup({
       -- TODO: These are not how I want them! take some time to fix them.
       vim.keymap.set('n', '<leader>help', builtin.help_tags, { desc = 'search [help]' })
       vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
-      vim.keymap.set('n', '<leader>sdir', builtin.find_files, { desc = '[F]ind in open [Files]' })
+      vim.keymap.set('n', '<leader>fdir', builtin.find_files, { desc = '[F]ind in current [Dir]ectory' })
       vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
       vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
       vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
       vim.keymap.set('n', '<leader>dd', builtin.diagnostics, { desc = 'Search [D]iagnostics' })
       vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
-      vim.keymap.set('n', '<leader>sb', builtin.buffers, { desc = '[S]earch open [B]uffers' })
+      vim.keymap.set('n', '<leader>fb', builtin.buffers, { desc = '[F]ind open [B]uffers' })
+      vim.keymap.set('n', '<leader>sb', function()
+        require('telescope.builtin').live_grep({
+          grep_open_files = true, -- Only search open buffers
+        })
+      end, { desc = '[S]earch open [B]uffers' })
 
       vim.keymap.set('n', '<leader>sp', grep_dir, { desc = '[S]earch in [P]roject (current directory)' })
       vim.keymap.set('n', '<leader>st', '<Cmd>Telescope treesitter<CR>', { desc = '[S]earch [T]reesitter symbols' })
@@ -909,7 +941,7 @@ require('lazy').setup({
             --'--header-insertion=iwyu',
             '--clang-tidy',
             '--fallback-style=Google',
-            '--log=verbose',
+            --'--log=verbose',
           },
           -- root_dir = require('lspconfig').util.root_pattern('compile_commands.json'),
         },
@@ -1032,18 +1064,20 @@ require('lazy').setup({
         --lsp_format = 'prefer',
         timeout_ms = 500,
       },
-      -- format_on_save = function(bufnr)
-      --   -- Disable "format_on_save lsp_fallback" for languages that don't
-      --   -- have a well standardized coding style. You can add additional
-      --   -- languages here or re-enable it for the disabled ones.
-      --   --local disable_filetypes = { c = false, cpp = false }
-      --   return {
-      --     timeout_ms = 500,
-      --     -- Do formatting with the attached LSP if it is available.
-      --     lsp_fallback = "prefer",
-      --     -- not disable_filetypes[vim.bo[bufnr].filetype],
-      --   }
-      -- end,
+      format_on_save = function(bufnr)
+        -- Disable "format_on_save lsp_fallback" for languages that don't
+        -- have a well standardized coding style. You can add additional
+        -- languages here or re-enable it for the disabled ones.
+        local disable_filetypes = { sh = true }
+        if disable_filetypes[vim.bo[bufnr].filetype] then
+          return nil
+        else
+          return {
+            timeout_ms = 500,
+            lsp_format = 'fallback',
+          }
+        end
+      end,
       formatters_by_ft = {
         lua = { 'stylua' },
         cpp = { 'clang-format' },
@@ -1504,7 +1538,10 @@ require('lazy').setup({
     dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.nvim' }, -- if you use the mini.nvim suite
     ---@module 'render-markdown'
     ---@type render.md.UserConfig
-    opts = {},
+    opts = {
+      file_types = { 'markdown', 'Avante' },
+    },
+    ft = { 'markdown', 'Avante' },
   },
   {
     -- Netrw replacement.
@@ -1647,7 +1684,7 @@ local setup_notify = function()
   -- Any messages we want filtered can be added here.
   local banned_messages = {
     'ciderlsp: 0: Workspace is too large for semantic functionality (see go/large-workspace).',
-    'ciderlsp: 0: DocumentHighlight is not supported for build',
+    'ciderlsp: 0: DocumentHighlight is not supported for',
   }
 
   vim.notify = function(msg, ...)
