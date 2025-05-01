@@ -213,6 +213,9 @@ vim.keymap.set('n', 'N', 'Nzzzv')
 -- Close buffer without closing window.
 vim.keymap.set('n', '<leader>q', '<cmd>bp|bd #<CR>', { desc = 'Close current buffer' })
 
+-- Show history.
+vim.keymap.set('n', '<leader>sh', ':lua Snacks.notifier.show_history()<CR>', { desc = 'Show notifier history' })
+
 -- Aliases for fat-fingering
 vim.api.nvim_create_user_command('WQ', 'wq', {})
 vim.api.nvim_create_user_command('Wq', 'wq', {})
@@ -1497,11 +1500,16 @@ require('lazy').setup({
       },
       indent = { enabled = false },
       input = { enabled = true },
-      notifier = { enabled = true },
+      notifier = { enabled = true, timeout = 20000 },
       quickfile = { enabled = true },
       scroll = { enabled = false },
       statuscolumn = { enabled = true },
       words = { enabled = true },
+      styles = {
+        notification = {
+          wo = { wrap = true }, -- Wrap notifications
+        },
+      },
     },
   },
   {
