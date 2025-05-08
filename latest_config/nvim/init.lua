@@ -1040,6 +1040,12 @@ require('lazy').setup({
       require('mason-tool-installer').setup({ ensure_installed = ensure_installed })
 
       require('mason-lspconfig').setup({
+        ensure_installed = {},
+        automatic_enable = {
+          exclude = {
+            'clangd',
+          },
+        },
         handlers = {
           function(server_name)
             local server = servers[server_name] or {}
@@ -1311,13 +1317,13 @@ require('lazy').setup({
               local item = entry:get_completion_item()
               -- Label where the info came from.
               local menu = {
+                nvim_ciderlsp = '(🤖)',
                 buffer = '[buffer]',
                 nvim_lsp = '[LSP]',
                 nvim_lua = '[API]',
                 path = '[path]',
                 luasnip = '[snip]',
                 vim_vsnip = '[snip]',
-                nvim_ciderlsp = '(🤖)',
               }
               vim_item.menu = menu[entry.source.name]
 
