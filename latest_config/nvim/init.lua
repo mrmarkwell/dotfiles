@@ -101,13 +101,11 @@ vim.opt.colorcolumn = '81' -- Putting this at 81 since the 80 is the limit.
 vim.opt.autochdir = true
 
 -- Fold experimentation
+vim.opt.foldenable = false
 vim.opt.foldmethod = 'expr'
 vim.opt.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
---vim.opt.foldcolumn = '0'
---vim.opt.foldtext = ''
-vim.opt.foldlevel = 99
---vim.opt.foldlevelstart = 1
-vim.opt.foldnestmax = 2
+vim.opt.foldlevel = 99 -- Keep all folds open by default (higher number means more open)
+vim.opt.foldcolumn = '1' -- Show a fold column to indicate fold levels
 
 -- Don't load built-in plugins.
 vim.g.loaded_gzip = true
@@ -200,6 +198,7 @@ vim.keymap.set('n', '<leader>gb', '<cmd>GitBlameToggle<cr>', { desc = 'Toggle [G
 -- make it possible to move highighted lines with capital J and K
 vim.keymap.set('v', 'J', ':m \'>+1<CR>gv=gv')
 vim.keymap.set('v', 'K', ':m \'<-2<CR>gv=gv')
+vim.keymap.set('n', '<leader>y', ':%y<CR>', { desc = '[Y]ank entire file' })
 
 -- Make joining lines not move the cursor.
 vim.keymap.set('n', 'J', 'mzJ`z')
@@ -278,6 +277,18 @@ vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper win
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
+
+-- Fix an issue where folding doesn't work because of interferance from plugins.
+-- https://github.com/nvim-telescope/telescope.nvim/issues/699
+vim.api.nvim_create_autocmd('BufEnter', {
+  callback = function()
+    if vim.opt.foldmethod:get() == 'expr' then
+      vim.schedule(function()
+        vim.opt.foldmethod = 'expr'
+      end)
+    end
+  end,
+})
 
 -- Highlight when yanking (copying) text
 --  Try it with `yap` in normal mode
@@ -502,7 +513,7 @@ function RotateColorscheme()
   --vim.api.nvim_echo({{':colorscheme ' .. theme}}, false, {})
 end
 
-vim.keymap.set('n', '<F8>', RotateColorscheme, { desc = 'Rotate color scheme' })
+vim.keymap.set('n', '<leader>C', RotateColorscheme, { desc = 'Rotate color scheme' })
 vim.keymap.set('n', '<leader>o', ':lua open_last_n_buffers(1)<CR>', { desc = 'Reopen last buffer', noremap = true, silent = true })
 
 -- NOTE: end my functions.
@@ -776,34 +787,34 @@ require('lazy').setup({
     end,
   },
   {
+    -- `lazydev` configures Lua LSP for your Neovim config, runtime and plugins
+    -- used for completion, annotations and signatures of Neovim apis
+    'folke/lazydev.nvim',
+    ft = 'lua',
+    opts = {
+      library = {
+        -- Load luvit types when the `vim.uv` word is found
+        { path = '${3rd}/luv/library', words = { 'vim%.uv' } },
+      },
+    },
+  },
+  {
     -- LSP Configuration & Plugins
     'neovim/nvim-lspconfig',
     event = 'BufReadPre',
     dependencies = {
       -- Automatically install LSPs and related tools to stdpath for Neovim
-      { 'williamboman/mason.nvim', config = true }, -- NOTE: Must be loaded before dependants
-      'williamboman/mason-lspconfig.nvim',
+      -- Mason must be loaded before its dependents so we need to set it up here.
+      -- NOTE: `opts = {}` is the same as calling `require('mason').setup({})`
+      { 'mason-org/mason.nvim', opts = {} },
+      'mason-org/mason-lspconfig.nvim',
       'WhoIsSethDaniel/mason-tool-installer.nvim',
 
       -- Useful status updates for LSP.
-      -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
       { 'j-hui/fidget.nvim', opts = {} },
 
-      -- `lazydev` configures Lua LSP for your Neovim config, runtime and plugins
-      -- used for completion, annotations and signatures of Neovim apis
-      {
-        -- `lazydev` configures Lua LSP for your Neovim config, runtime and plugins
-        -- used for completion, annotations and signatures of Neovim apis
-        'folke/lazydev.nvim',
-        ft = 'lua',
-        opts = {
-          library = {
-            -- Load luvit types when the `vim.uv` word is found
-            { path = 'luvit-meta/library', words = { 'vim%.uv' } },
-          },
-        },
-      },
-      { 'Bilal2453/luvit-meta', lazy = true },
+      -- Allows extra capabilities provided by blink.cmp
+      'saghen/blink.cmp',
     },
     config = function()
       -- Brief aside: **What is LSP?**
@@ -1521,7 +1532,9 @@ require('lazy').setup({
   {
     -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
+    event = { 'BufReadPre', 'BufNewFile' },
     build = ':TSUpdate',
+    main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     opts = {
       ensure_installed = { 'bash', 'c', 'html', 'lua', 'luadoc', 'markdown', 'vim', 'vimdoc', 'cpp' },
       -- Autoinstall languages that are not installed
@@ -1529,13 +1542,10 @@ require('lazy').setup({
       highlight = {
         enable = true,
       },
+      folds = {
+        enable = true,
+      },
     },
-    config = function(_, opts)
-      -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
-
-      ---@diagnostic disable-next-line: missing-fields
-      require('nvim-treesitter.configs').setup(opts)
-    end,
   },
   {
     -- Add indentation guides even on blank lines.
