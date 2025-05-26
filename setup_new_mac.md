@@ -3,28 +3,30 @@
 
 1. Install homebrew via the terminal command (see website).
 2. Set up ssh key for github and add it to github profile.
-3. Install ghostty with brew.
-`brew install --cask ghostty`
-4. Clone my dotfiles repo into $HOME.
-5. Install fish shell. 
-`brew install fish`
-6. Setup Git config: TODO: Should this be done by just linking to my existing config?
+3. Brew installs:
 ```
-git config --global user.name "Matthew Markwell"
-git config --global user.email matthewmarkwell@gmail.com
+brew install --cask ghostty
+brew install --cask font-maple-mono-nf
+brew install --cask font-commit-mono-nerd-font
+brew install --cask font-meslo-lg-nerd-font
+brew install --cask font-roboto-mono-nerd-font
+brew install fish eza hyperfine bazel llvm dust iputils file neofetch fzf bat htop delta rust
+brew install lld starship zoxide ripgrep fd cowsay fortune coreutils 
+brew install fastfetch
 ```
 
+4. Clone my dotfiles repo into $HOME.
+5. Go into ~/dotfiles/config_rewrite_2025 and run `stow .`
+6. Download, build, and install latest Neovim.
+
+
+
 TODO:
-- Investigate stow as a mechanism for getting my config dotfiles into XGD_CONFIG_HOME?
-- Setup XGD_CONFIG_HOME:
-```
-# XDG Base Directory Specification
-set -gx XDG_CONFIG_HOME "$HOME/.config"
-set -gx XDG_CACHE_HOME "$HOME/.cache"
-set -gx XDG_DATA_HOME "$HOME/.local/share"
-set -gx XDG_STATE_HOME "$HOME/.local/state"
-```
-- Go through ghostty config documentation to get that set up.
+1. Go through my config.fish on my work computer and pull in anything really useful.
+2. Go through all my nix files and pull out anything worth having.
+3. Go through ghostty config documentation to get that set up.
+5. Go through a zellij tutorial (replace tmux).
+
 
 
 

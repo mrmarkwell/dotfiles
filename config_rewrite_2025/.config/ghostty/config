@@ -1,0 +1,9 @@
+# Ghostty config. To reload after making changes, Cmd + Shift + ,
+theme = Monokai Pro
+font-family = Maple Mono NF
+# Use system clipboard when copying stuff.
+copy-on-select = clipboard
+shell-integration = fish
+auto-update = download
+font-size = 16
+command = /opt/homebrew/bin/fish --login --interactive

@@ -1,3 +1,8 @@
+# Homebrew setup for macOS
+if test (uname) = "Darwin"
+   /opt/homebrew/bin/brew shellenv | source
+end
+    
 # XDG Base Directory Specification
 set -gx XDG_CONFIG_HOME "$HOME/.config"
 set -gx XDG_CACHE_HOME "$HOME/.cache"
@@ -29,5 +34,7 @@ abbr -a findc fd -e cc -e cpp -e c -e h
 abbr -a grepc fd -e cc -e cpp -e c -e h | xargs rg
 abbr -a sedc fd -e cc -e cpp -e c -e h | xargs sed
 abbr -a formatcpp fd -ecc -eh | xargs clang-format -i
+
+starship init fish | source
 end
 
