@@ -36,5 +36,6 @@ abbr -a sedc fd -e cc -e cpp -e c -e h | xargs sed
 abbr -a formatcpp fd -ecc -eh | xargs clang-format -i
 
 starship init fish | source
+fastfetch
 end
 
