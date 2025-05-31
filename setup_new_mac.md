@@ -27,9 +27,3 @@ TODO:
 4. Go through anything in ~/dotfiles/.config
 5. Neovim
 
-
-
-
-
-5. TODO: is this neccesary? Ghostty apparently comes with this installed.
-   Install a nerdfont (Meslo is typical for me).

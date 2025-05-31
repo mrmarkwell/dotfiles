@@ -12,30 +12,36 @@ set -gx XDG_STATE_HOME "$HOME/.local/state"
 if status is-interactive
     # Commands to run in interactive sessions can go here
 
+# ============= Aliases ==============
 
-# TODO:
-# Zoxide
-# Dust
-# set EDITOR nvim
+alias -s randomcowsay 'cowsay -f $(ls $HOME/dotfiles/cows/ | gshuf -n1)' > /dev/null
+alias -s wisdom 'fortune | cowsay -f $(ls $HOME/dotfiles/cows/ | gshuf -n1)' > /dev/null
+
+# set -Ux EDITOR nvim
 alias back="prevd > /dev/null"
 alias next="nextd > /dev/null"
 
-#       alias randomcowsay = "cowsay -f $(ls -d ~/dotfiles/cows/* | shuf -n1)";
-#      alias wisdom = "fortune | cowsay -f $(ls -d ~/dotfiles/cows/* | shuf -n1)";
+# ============ Functions =============
 
-abbr -a eb nvim ~/dotfiles/.config/fish/config.fish
+
+# ========== Abbreviations ===========
+
 # abbr -a vim nvim
-
-# ripgrep is _way_ faster than grep.
 abbr -a rg rg --no-heading
-# ripgrep is _way_ faster than grep.
 abbr -a rgg rg --no-heading -uuLi
 abbr -a findc fd -e cc -e cpp -e c -e h
 abbr -a grepc fd -e cc -e cpp -e c -e h | xargs rg
 abbr -a sedc fd -e cc -e cpp -e c -e h | xargs sed
 abbr -a formatcpp fd -ecc -eh | xargs clang-format -i
+abbr -a sb 'source ~/.config/fish/config.fish'
+abbr -a eb 'nvim ~/.config/fish/config.fish'
+abbr -a du dust
+abbr -a bat batcat
+abbr -a cat batcat
+abbr -a ls eza -b
 
 starship init fish | source
 fastfetch
+wisdom
 end
 
