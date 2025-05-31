@@ -18,6 +18,10 @@ fish_variables
 .config/fish/functions/fish_mode_prompt.fish
 .config/fish/completions/tide.fish
 
+# New methodology is to put functions as aliases or by writing them out in config.fish.
+# So don't save the functions folder.
+config_rewrite_2025/.config/fish/functions
+
 bass.fish
 __bass.py
 
