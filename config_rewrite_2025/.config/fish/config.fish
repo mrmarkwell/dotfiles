@@ -10,6 +10,9 @@ set -gx XDG_CONFIG_HOME "$HOME/.config"
 set -gx XDG_CACHE_HOME "$HOME/.cache"
 set -gx XDG_DATA_HOME "$HOME/.local/share"
 set -gx XDG_STATE_HOME "$HOME/.local/state"
+
+# Where to look for cowsay cows.
+set -gx COWPATH "$HOME/dotfiles/cows"
 set -gx FZF_DEFAULT_OPTS '
 --layout=reverse
 --border=rounded

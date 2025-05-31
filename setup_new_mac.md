@@ -3,6 +3,7 @@
 
 1. Install homebrew via the terminal command (see website).
 2. Set up ssh key for github and add it to github profile.
+3. Install Devtools: `xcode-select --install`
 3. Brew installs:
 ```
 brew install --cask ghostty
@@ -15,6 +16,7 @@ brew install bazel llvm dust iputils
 brew install file neofetch fzf bat htop delta rust
 brew install lld starship zoxide ripgrep fd cowsay fortune coreutils 
 brew install fastfetch shfmt mdformat pigz
+brew install ninja cmake gettext curl
 ```
 4. Clone my dotfiles repo into $HOME.
 5. Go into ~/dotfiles/config_rewrite_2025 and run `stow .`
