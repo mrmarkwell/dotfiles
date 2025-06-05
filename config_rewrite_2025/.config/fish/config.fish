@@ -135,6 +135,8 @@ end
 
 # ============ Wrapup =============
 
+fish_config theme choose "tokyonight_moon"
+
 # Use Starship for prompt.
 starship init fish | source
 fastfetch
