@@ -1042,7 +1042,7 @@ require('lazy').setup({
         'stylua', -- Used to format Lua code
         'nixpkgs-fmt', -- Used to format nix code.
         'buildifier', -- Used to format bazel files.
-        'clang-format',
+        -- 'clang-format', -- Clang-format Google provides is newer.
         'rust-analyzer',
         'lua-language-server',
         'bash-language-server',

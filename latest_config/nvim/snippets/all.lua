@@ -104,4 +104,5 @@ return {
   ),
   s('BUG', t('BUG=411727687')),
   s('TODO', t('// TODO: b/411727687 - ')),
+  s('BYPASS', t('BYPASS_AICORE_GUITAR=')),
 }
