@@ -41,6 +41,11 @@ alias next="nextd > /dev/null"
 
 # ========== Abbreviations ===========
 
+abbr -a sshm 'ssh -Y -C markwell@muramasa.c.googlers.com'
+abbr -a scpfromcloudtop 'scp -rp markwell@muramasa.c.googlers.com:/usr/local/google/home/markwell/to_macbook/* ~/from_muramasa/'
+abbr -a scptocloudtop 'scp -rp ~/to_muramasa/* markwell@muramasa.c.googlers.com:/usr/local/google/home/markwell/from_macbook/'
+
+
 # Example Usage - find and replace in cpp files
 #       Make sure you're replacing only stuff you want to replace
 #   $ grepc SearchTerm
@@ -123,8 +128,9 @@ end
 # ============= Misc ==============
 
 # Do I need this?
-# fish_add_path ~/.cargo/bin
-# fish_add_path ~/.local/bin
+fish_add_path ~/.cargo/bin
+fish_add_path ~/.local/bin
+fish_add_path /opt/homebrew/bin
 
 # Enable zoxide `z` (https://github.com/ajeetdsouza/zoxide)
 if command -v zoxide &>/dev/null

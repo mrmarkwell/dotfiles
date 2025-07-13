@@ -12,7 +12,7 @@ brew install --cask font-commit-mono-nerd-font
 brew install --cask font-meslo-lg-nerd-font
 brew install --cask font-roboto-mono-nerd-font
 brew install fish eza hyperfine
-brew install bazel llvm dust iputils
+brew install bazel llvm dust stow
 brew install file neofetch fzf bat htop delta rust
 brew install lld starship zoxide ripgrep fd cowsay fortune coreutils 
 brew install fastfetch shfmt mdformat pigz
