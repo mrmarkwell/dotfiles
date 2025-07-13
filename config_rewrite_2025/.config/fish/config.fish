@@ -34,7 +34,7 @@ if status is-interactive
 alias -s randomcowsay 'cowsay -f $(ls $HOME/dotfiles/cows/ | gshuf -n1)' > /dev/null
 alias -s wisdom 'fortune | cowsay -f $(ls $HOME/dotfiles/cows/ | gshuf -n1)' > /dev/null
 
-# set -Ux EDITOR nvim
+set -Ux EDITOR nvim
 alias back="prevd > /dev/null"
 alias next="nextd > /dev/null"
 
@@ -53,7 +53,7 @@ abbr -a scptocloudtop 'scp -rp ~/to_muramasa/* markwell@muramasa.c.googlers.com:
 #   $ findc | xargs sed -i 's/SearchTerm/ReplaceTerm/g'
 #       Or
 #   $ sedc -i 's/SearchTerm/ReplaceTerm/g'
-# abbr -a vim nvim
+abbr -a vim nvim
 abbr -a rg rg --no-heading
 abbr -a rgg rg --no-heading -uuLi
 abbr -a findc fd -e cc -e cpp -e c -e h
