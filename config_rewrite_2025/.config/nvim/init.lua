@@ -1,5 +1,11 @@
 --[[ Brand new neovim config 2025
 
+Rewrite Goals:
+1. Simpler. Don't install every plugin I've ever heard of.
+2. Update to v11 best practices. Use vim.lsp.
+3. Use Snacks.picker instead of Telescope.
+4. Use blink.cmp. Very simple lsp config.
+
 NOTE: Reminders of cool functionality.
 - General
   - To open neovim with a different config path, set NVIM_APPNAME
