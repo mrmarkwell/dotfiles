@@ -150,6 +150,7 @@ vim.opt.showmode = false
 --  See `:help 'clipboard'`
 vim.schedule(function()
   vim.opt.clipboard = 'unnamedplus'
+  vim.g.clipboard = 'osc52'
 end)
 
 -- Enable break indent
@@ -1720,6 +1721,21 @@ local setup_notify = function()
     --require('notify')(msg, ...)
   end
 end
+
+-- vim.lsp.enable('clangd')
+vim.lsp.config('clangd', {
+  cmd = {
+    'clangd',
+    -- Do everything in-memory for performance.
+    '--pch-storage=memory',
+    -- Use 20 threads
+    '-j=20',
+    --'--header-insertion=iwyu',
+    '--clang-tidy',
+    '--fallback-style=Google',
+    --'--log=verbose',
+  },
+})
 
 setup_notify()
 

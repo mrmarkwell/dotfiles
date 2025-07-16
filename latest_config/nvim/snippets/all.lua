@@ -105,4 +105,17 @@ return {
   s('BUG', t('BUG=411727687')),
   s('TODO', t('// TODO: b/411727687 - ')),
   s('BYPASS', t('BYPASS_AICORE_GUITAR=')),
+  s(
+    'MARKWELL',
+    fmt(
+      [[
+      int dbg_counter = 0;
+      VLOG(1) << "MARKWELLDEBUG: {}" << dbg_counter++;
+      ]],
+      {
+        -- i(1) is at nodes[1]
+        i(1, 'HERE: '),
+      }
+    )
+  ),
 }
