@@ -41,7 +41,7 @@ alias next="nextd > /dev/null"
 
 # ========== Abbreviations ===========
 
-abbr -a sshm 'ssh -Y -C markwell@muramasa.c.googlers.com'
+abbr -a sshm 'ssh markwell@muramasa.c.googlers.com'
 abbr -a scpfromcloudtop 'scp -rp markwell@muramasa.c.googlers.com:/usr/local/google/home/markwell/to_macbook/* ~/from_muramasa/'
 abbr -a scptocloudtop 'scp -rp ~/to_muramasa/* markwell@muramasa.c.googlers.com:/usr/local/google/home/markwell/from_macbook/'
 
@@ -70,8 +70,7 @@ abbr -a en 'nvim ~/.config/nvim/init.lua'
 # Replacements that are better.
 # You can use `command du` to bypass the abbreviation.
 abbr -a du dust
-abbr -a bat batcat
-abbr -a cat batcat
+abbr -a cat bat
 abbr -a ls eza -b
 
 # My preferred shell format settings.

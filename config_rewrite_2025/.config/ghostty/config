@@ -1,5 +1,27 @@
 # Ghostty config. To reload after making changes, Cmd + Shift + ,
-theme = Monokai Pro
+
+# these are kind of necessary because of a washed out color bug.
+#theme = deep
+theme = Adwaita Dark
+
+window-colorspace = display-p3
+font-thicken = true
+
+# theme = Monokai Pro
+# background = black
+background = #1e1e1e
+
+# # Experiments
+# background-opacity = 0.65
+# background-blur-radius = 20
+# cursor-style = block
+# cursor-style-blink = false
+cursor-invert-fg-bg = true
+
+
+# macos-titlebar-style = hidden
+macos-option-as-alt = true
+
 font-family = Maple Mono NF
 # Use system clipboard when copying stuff.
 copy-on-select = clipboard
@@ -7,3 +29,5 @@ shell-integration = fish
 auto-update = download
 font-size = 16
 command = /opt/homebrew/bin/fish --login --interactive
+mouse-hide-while-typing = true
+scrollback-limit = 1000000
