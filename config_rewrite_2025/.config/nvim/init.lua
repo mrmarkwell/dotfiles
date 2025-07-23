@@ -41,22 +41,22 @@ NOTE: Reminders of cool functionality.
 
 ------------------------ Functions -------------------------
 -- Function to map something with a description.
-map = function(mode, lhs, rhs, desc)
+local map = function(mode, lhs, rhs, desc)
   vim.keymap.set(mode, lhs, rhs, { desc = desc, noremap = true })
 end
 
 -- Shorter version for normal keymaps.
-nmap = function(lhs, rhs, desc)
+local nmap = function(lhs, rhs, desc)
   map('n', lhs, rhs, desc)
 end
 
 -- Silent nmap.
-snmap = function(lhs, rhs, desc)
+local snmap = function(lhs, rhs, desc)
   vim.keymap.set('n', lhs, rhs, { desc = desc, silent = true, noremap = true })
 end
 
 -- Shorter version for visual keymaps.
-vmap = function(lhs, rhs, desc)
+local vmap = function(lhs, rhs, desc)
 	map('v', lhs, rhs, desc)
 end
 
@@ -275,6 +275,8 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
+vim.lsp.enable({"clangd", "lua_ls"})
+
 -- Setup lazy.nvim
 require("lazy").setup({
   spec = {
@@ -357,4 +359,3 @@ require("lazy").setup({
   -- automatically check for plugin updates
   checker = { enabled = true, notify = false },
 })
-

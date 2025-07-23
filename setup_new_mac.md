@@ -17,7 +17,7 @@ brew install file neofetch fzf bat htop delta rust
 brew install lld starship zoxide ripgrep fd cowsay fortune coreutils 
 brew install fastfetch shfmt mdformat pigz
 brew install ninja cmake gettext curl 
-brew install luarocks
+brew install luarocks lua-language-server
 ```
 5. Clone my dotfiles repo into $HOME.
 6. Go into ~/dotfiles/config_rewrite_2025 and run `stow .`
