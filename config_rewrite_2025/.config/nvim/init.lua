@@ -23,6 +23,7 @@ NOTE: Reminders of cool functionality.
   - gq -> restructure highlighted region to abide by `textwidth`.
   - After searching, dgn deletes the current highlighted match and goes to next.
     - This can be done repeatedly with "."
+  - `:help deprecated` shows deprecated items with the correct alternative.
 - Telescope
   - <leader>help -> search [help]
   - leader>sr -> reopen telescope [S]earch [R]esume.
@@ -36,7 +37,6 @@ NOTE: Reminders of cool functionality.
   - <leader>n and <leader>N to navigate diagnostic messages.
   - <leader>e to show the full error/diagnosic message on the current line.
   - <leader>l to open the quickfix list.
-
 --]]
 
 ------------------------ Functions -------------------------
@@ -62,7 +62,7 @@ end
 
 -- Function to open the most recent N buffers from vim.v.oldfiles
 -- Skips already open files.
-_G.open_last_n_buffers = function(n)
+vim.open_last_n_buffers = function(n)
   -- Get the list of old files
   local oldfiles = vim.v.oldfiles
   -- Calculate the number of files to open
@@ -93,7 +93,7 @@ end
 
 -- Create a command to open the last N buffers
 vim.api.nvim_create_user_command('OpenLastNBuffers', function(opts)
-  open_last_n_buffers(tonumber(opts.args))
+  vim.open_last_n_buffers(tonumber(opts.args))
 end, { nargs = 1 })
 
 -- Pretty print command - for mapping to an nvim user command "PrettyPrint".
@@ -108,7 +108,7 @@ end
 vim.api.nvim_create_user_command('PrettyPrint', pretty_print_command, { nargs = '?', desc = 'Inspect a value' })
 
 -- Global pretty print function.
-_G.pretty_print = function(var)
+vim.pretty_print = function(var)
   local inspect = require('inspect')
   vim.notify(inspect(var))
 end
@@ -212,8 +212,9 @@ nmap('<leader>rw', 'ciw<C-R>0<ESC>', '[R]eplace the [w]ord under cursor with pre
 snmap('<esc>', '<esc>:noh<CR>', 'Temporary')
 nmap('<leader>cfg', '<cmd>e ~/.config/nvim/init.lua<CR>', 'Open Nvim [Config]')
 nmap('<leader>gcfg', '<cmd>e ~/.config/nvim/lua/google.lua<CR>', 'Open Nvim [G]oogle [C]onfig')
-nmap('<leader>n', vim.diagnostic.goto_next, 'Go to next diagnostic message')
-nmap('<leader>N', vim.diagnostic.goto_prev, 'Go to previous diagnostic message')
+nmap('<leader>f', vim.lsp.buf.format, "Format file")
+nmap('<leader>n', function() vim.diagnostic.jump({ count = 1, float = true }) end, 'Go to next diagnostic message')
+nmap('<leader>N', function() vim.diagnostic.jump({ count = -1, float = true }) end, 'Go to previous diagnostic message')
 nmap('<leader>e', vim.diagnostic.open_float, 'Show diagnostic [E]rror messages')
 nmap('<leader>l', vim.diagnostic.setloclist, 'Open diagnostic quickfix [L]ist')
 nmap('<left>', '<cmd>echo "Use h to move!!"<CR>')
@@ -224,7 +225,7 @@ nmap('<C-h>', '<C-w><C-h>', 'Move focus to the left window')
 nmap('<C-l>', '<C-w><C-l>', 'Move focus to the right window')
 nmap('<C-j>', '<C-w><C-j>', 'Move focus to the lower window')
 nmap('<C-k>', '<C-w><C-k>', 'Move focus to the upper window')
-snmap('<leader>o', ':lua open_last_n_buffers(1)<CR>', 'Reopen last buffer')
+snmap('<leader>o', ':lua vim.open_last_n_buffers(1)<CR>', 'Reopen last buffer')
 
 -- TODO: check on these ones.
 nmap('<leader>gb', '<cmd>GitBlameToggle<cr>', 'Toggle [G]it [B]lame')
@@ -284,7 +285,7 @@ require("lazy").setup({
     --       `require('ThePlugin').setup({...})`
 
     -- "gc" to comment highlighted selection.
-    { 'numToStr/Comment.nvim',           opts = {} },
+    { 'numToStr/Comment.nvim', opts = {} },
     -- TODO: Setup blink.cmp. Treesitter.
     -- LSP basic setup.
     {
@@ -339,7 +340,16 @@ require("lazy").setup({
         -- Default list of enabled providers defined so that you can extend it
         -- elsewhere in your config, without redefining it, due to `opts_extend`
         sources = {
-          default = { 'lsp', 'path', 'snippets', 'buffer' },
+          -- add lazydev to your completion providers
+          default = { "lazydev", "lsp", "path", "snippets", "buffer" },
+          providers = {
+            lazydev = {
+              name = "LazyDev",
+              module = "lazydev.integrations.blink",
+              -- make lazydev completions top priority (see `:h blink.cmp`)
+              score_offset = 100,
+            },
+          },
         },
 
         -- (Default) Rust fuzzy matcher for typo resistance and significantly better performance
@@ -351,7 +361,173 @@ require("lazy").setup({
       },
       opts_extend = { "sources.default" }
     },
-    { "nvim-treesitter/nvim-treesitter", branch = 'master', lazy = false, build = ":TSUpdate" },
+    {
+      "nvim-treesitter/nvim-treesitter",
+      branch = 'master',
+      lazy = false,
+      build = ":TSUpdate",
+      opts = {
+        -- Autoinstall languages that are not installed
+        auto_install = true,
+        highlight = {
+          enable = true,
+        },
+        folds = {
+          enable = true,
+        },
+      },
+    },
+    {
+      -- Useful plugin to show you pending keybinds.
+      'folke/which-key.nvim',
+      event = 'VimEnter', -- Sets the loading event to 'VimEnter'
+      opts = {
+        -- Put the popup in the bottom-right.
+        preset = 'helix',
+        -- Expand sub groups if they're just a single thing.
+        --expand = 1,
+        expand = function(node)
+          -- Expand if there is no description.
+          return not node.desc
+        end,
+        spec = {
+          { '<leader>c',        group = '[C]ode' },
+          { '<leader>d',        group = '[D]ocument' },
+          { '<leader>r',        group = '[R]ename' },
+          { '<leader>s',        group = '[S]earch' },
+          { '<leader>w',        group = '[W]orkspace' },
+          { '<leader>f',        group = '[F]ind' },
+          { '<leader><leader>', group = 'Telescope Path' },
+        },
+      },
+      keys = {
+        {
+          '<leader>?',
+          function()
+            require('which-key').show({ global = false })
+          end,
+          desc = 'Buffer Local Keymaps (which-key)',
+        },
+      },
+    },
+    {
+      -- Netrw replacement.
+      'stevearc/oil.nvim',
+      opts = {},
+      -- Optional dependencies
+      config = function()
+        require('oil').setup()
+      end,
+    },
+    {
+      'akinsho/bufferline.nvim',
+      opts = {
+        options = {
+          custom_filter = function(buf_number)
+            return vim.api.nvim_get_option_value('buftype', { buf = buf_number }) ~= 'quickfix'
+          end,
+          diagnostics = 'nvim_lsp',
+          offsets = {
+            {
+              filetype = 'NvimTree',
+              text = 'File Explorer',
+              highlight = 'Directory',
+            },
+          },
+          show_buffer_close_icons = false,
+          show_close_icon = false,
+        },
+        -- highlights = {
+        --   buffer_selected = { italic = false },
+        --   diagnostic_selected = { italic = false },
+        --   duplicate = { italic = false },
+        --   duplicate_selected = { italic = false },
+        --   duplicate_visible = { italic = false },
+        --   error_diagnostic_selected = { italic = false },
+        --   error_selected = { italic = false },
+        --   hint_diagnostic_selected = { italic = false },
+        --   hint_selected = { italic = false },
+        --   info_diagnostic_selected = { italic = false },
+        --   info_selected = { italic = false },
+        --   numbers_selected = { italic = false },
+        --   pick = { italic = false },
+        --   pick_selected = { italic = false },
+        --   pick_visible = { italic = false },
+        --   warning_diagnostic_selected = { italic = false },
+        --   warning_selected = { italic = false },
+        -- },
+      },
+      config = function(_, opts)
+        -- Set up Bufferline.
+        require('bufferline').setup(opts)
+
+        -- Set keymaps.
+        vim.keymap.set('n', '<Left>', '<Cmd>BufferLineCyclePrev<CR>', { desc = 'Previous buffer' })
+        vim.keymap.set('n', '<Right>', '<Cmd>BufferLineCycleNext<CR>', { desc = 'Next buffer' })
+        vim.keymap.set('n', '<Leader><Left>', '<Cmd>BufferLineMovePrev<CR>', { desc = 'Move buffer left' })
+        vim.keymap.set('n', '<Leader><Right>', '<Cmd>BufferLineMoveNext<CR>', { desc = 'Move buffer right' })
+      end,
+    },
+    {
+      'f-person/git-blame.nvim',
+      event = 'VeryLazy',
+      config = function()
+        require('gitblame').setup({
+          --Note how the `gitblame_` prefix is omitted in `setup`
+          enabled = true,
+          highlight_group = 'Comment',
+          virtual_text_column = 80,
+          date_format = '%r',
+          message_template = '        <author> • <date> • <summary>',
+          message_when_not_committed = '        Not committed yet...',
+        })
+      end,
+    },
+    {
+      'folke/paint.nvim',
+      event = 'BufReadPre',
+      opts = {
+        highlights = {
+          {
+            filter = {},
+            pattern = 'DO_NOT_SUBMIT',
+            hl = 'ErrorMsg',
+          },
+          {
+            filter = {},
+            pattern = 'MARKWELLDEBUG',
+            hl = 'Constant',
+          },
+          {
+            filter = { filetype = 'lua' },
+            -- TODO: Make sure this works
+            -- The goal is to highlight the word 'section' in lua comments.
+            pattern = '%-%-SECTION:',
+            hl = 'Constant',
+          },
+        },
+      },
+      {
+        -- I use default LSP config now, but this is nice for the commands.
+        -- e.g. :LspRestart, :LspInfo, etc...
+        'neovim/nvim-lspconfig',
+        event = 'BufReadPre',
+      },
+    },
+    -- Go to file in lua.
+    { 'sam4llis/nvim-lua-gf',  ft = 'lua' },
+    {
+      'mbbill/undotree',
+      event = 'VeryLazy',
+      keys = {
+        {
+          '<leader>u',
+          vim.cmd.UndotreeToggle,
+          desc = 'Toggle Undotree',
+        },
+      },
+    },
+
   },
   -- Configure any other settings here. See the documentation for more details.
   -- colorscheme that will be used when installing plugins.

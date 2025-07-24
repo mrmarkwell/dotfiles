@@ -11,4 +11,21 @@ return {
     'selene.yml',
     '.git',
   },
+  settings = {
+    Lua = {
+      -- Formatting options
+      format = {
+        enable = true,
+        indent_style = "space",
+        indent_size = "2",
+        quote_style = "single",
+      },
+      diagnostics = {
+        -- Disable the "missing-fields" diagnostic
+        disable = {
+          "missing-fields",
+        },
+      },
+    },
+  },
 }
