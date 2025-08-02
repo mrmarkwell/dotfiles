@@ -23,6 +23,12 @@ cursor-invert-fg-bg = true
 macos-option-as-alt = true
 
 font-family = Maple Mono NF
+
+# Disables standard ligatures, contextual alternates, and discretionary ligatures.
+font-feature = -calt
+font-feature = -liga 
+font-feature = -dlig
+
 # Use system clipboard when copying stuff.
 copy-on-select = clipboard
 shell-integration = fish
