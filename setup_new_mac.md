@@ -18,6 +18,8 @@ brew install lld starship zoxide ripgrep fd cowsay fortune coreutils
 brew install fastfetch shfmt mdformat pigz
 brew install ninja cmake gettext curl 
 brew install luarocks lua-language-server
+brew install imagemagick luajit ghostscript
+brew install mermaid-cli tectonic
 ```
 5. Clone my dotfiles repo into $HOME.
 6. Go into ~/dotfiles/config_rewrite_2025 and run `stow .`
