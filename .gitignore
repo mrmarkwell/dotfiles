@@ -5,6 +5,9 @@ google.lua
 # This is just a cache for shell variables.
 fish_variables
 
+# API Keys and Secrets.
+secrets.fish
+
 # Plugin files generally start with _.
 .config/fish/functions/_*.fish
 .config/fish/functions/_*.py

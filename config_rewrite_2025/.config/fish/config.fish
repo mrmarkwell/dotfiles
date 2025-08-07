@@ -3,6 +3,9 @@ if test (uname) = "Darwin"
    /opt/homebrew/bin/brew shellenv | source
 end
     
+# API Keys and stuff that shouldn't be added to git.
+source ~/.config/fish/secrets.fish 
+
 # ======= Global Env Variables ========
 
 # XDG Base Directory Specification
