@@ -25,7 +25,7 @@ set -gx FZF_DEFAULT_OPTS '
 --pointer="❯"
 --marker="✓"
 --color="bg:#1e222a,bg+:#282c34,hl:#61afef,fg:#abb2bf,fg+:#e5c07b,info:#56b6c2,prompt:#c678dd,pointer:#61afef,marker:#98c379"
---preview="batcat --style=numbers --color=always --line-range :500 {}"
+--preview="bat --style=numbers --color=always --line-range :500 {}"
 --preview-window=up:80%
 '
 
