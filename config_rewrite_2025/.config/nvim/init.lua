@@ -279,7 +279,7 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
-vim.lsp.enable({ "clangd", "lua_ls" })
+vim.lsp.enable({ "clangd", "lua_ls", "tinymist" })
 
 -- Setup lazy.nvim
 require("lazy").setup({
@@ -375,11 +375,11 @@ require("lazy").setup({
         },
         -- you can enable a preset for easier configuration
         presets = {
-          bottom_search = true,   -- use a classic bottom cmdline for search
-          command_palette = true, -- position the cmdline and popupmenu together
+          bottom_search = true,         -- use a classic bottom cmdline for search
+          command_palette = true,       -- position the cmdline and popupmenu together
           long_message_to_split = true, -- long messages will be sent to a split
-          inc_rename = false,     -- enables an input dialog for inc-rename.nvim
-          lsp_doc_border = false, -- add a border to hover docs and signature help
+          inc_rename = false,           -- enables an input dialog for inc-rename.nvim
+          lsp_doc_border = false,       -- add a border to hover docs and signature help
         },
       },
       dependencies = {
@@ -569,6 +569,12 @@ require("lazy").setup({
     {
       "folke/todo-comments.nvim",
       dependencies = { "nvim-lua/plenary.nvim" },
+    },
+    {
+      'chomosuke/typst-preview.nvim',
+      ft = 'typst',
+      version = '1.*',
+      opts = {},
     },
     -- Go to file in lua.
     { 'sam4llis/nvim-lua-gf', ft = 'lua' },
