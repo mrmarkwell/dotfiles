@@ -1654,7 +1654,7 @@ require('lazy').setup({
         {
           filter = {},
           pattern = 'MARKWELL',
-          hl = 'Constant',
+          hl = 'ErrorMsg',
         },
         {
           filter = { filetype = 'lua' },

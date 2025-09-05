@@ -103,7 +103,18 @@ return {
     )
   ),
   s('BUG', t('BUG=411727687')),
-  s('TODO', t('// TODO: b/411727687 - ')),
+  s(
+    'TODO',
+    fmt(
+      [[
+      // TODO: b/{} - 
+      ]],
+      {
+        -- i(1) is at nodes[1]
+        i(1, '411727687'),
+      }
+    )
+  ),
   s('BYPASS', t('BYPASS_AICORE_GUITAR=')),
   s(
     'MARKWELL',
