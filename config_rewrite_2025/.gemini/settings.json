@@ -1,0 +1,33 @@
+{
+    "context": {
+        "fileFiltering": {
+            "enableRecursiveFileSearch": false
+        }
+    },
+    "general": {
+        "preferredEditor": "vim",
+        "enablePromptCompletion": true
+    },
+    "security": {
+        "auth": {
+            "selectedType": "gemini-api-key"
+        }
+    },
+    "ui": {
+        "theme": "Dracula",
+        "customWittyPhrases": ["thinking"]
+    },
+    "tools": {
+        "allowed": [
+            "run_shell_comand(blaze build)",
+            "run_shell_comand(blaze test)",
+            "run_shell_comand(blaze run)",
+            "run_shell_comand(hg diff)",
+            "run_shell_comand(hg pdiff)",
+            "run_shell_comand(hg status)",
+            "run_shell_comand(hg pstatus)",
+            "run_shell_comand(build_cleaner)",
+            "search_for_files_codesearch"
+        ]
+    }
+}
