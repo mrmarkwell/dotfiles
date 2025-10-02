@@ -1290,9 +1290,9 @@ require('lazy').setup({
         }),
         sources = {
           -- Order matters here. Prioritize the useful stuff!
+          { name = 'luasnip', priority = 40 },
           { name = 'nvim_ciderlsp', priority = 30 },
           { name = 'nvim_lsp', priority = 20 },
-          { name = 'luasnip', priority = 10 },
           { name = 'nvim_lua', priority = 1 },
           { name = 'path', priority = 1 },
           -- We don't want a lot of suggestions from the current buffer.

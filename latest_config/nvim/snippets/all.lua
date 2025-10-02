@@ -1,6 +1,9 @@
 local fmt = require('luasnip.extras.fmt').fmt
 return {
   -- important! fmt does not return a snippet, it returns a table of nodes.
+  s('snip_tracing', t('#include "android/aicore/backend/api/common/tracing.h"')),
+  s('RUNTIME', t('AICORE_RUNTIME_FUNCTION(')),
+  s('RRR', t('AICORE_RUNTIME_FUNCTION(')),
   s(
     'BEGIN_PUBLIC',
     fmt(
@@ -33,6 +36,7 @@ return {
     )
   ),
   s('BYPASS', t('BYPASS_AICORE_GUITAR=no affected tests.')),
+  s('VLOG', t('VLOG(1) << "MARKWELLDEBUG: " << ')),
   s(
     'MARKWELL',
     fmt(
