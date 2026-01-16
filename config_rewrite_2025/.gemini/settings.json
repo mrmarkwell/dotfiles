@@ -6,19 +6,22 @@
     },
     "general": {
         "preferredEditor": "vim",
-        "enablePromptCompletion": true
-    },
-    "security": {
-        "auth": {
-            "selectedType": "gemini-api-key"
-        }
+        "enablePromptCompletion": true,
+        "vimMode": true
     },
     "ui": {
         "theme": "Dracula",
-        "customWittyPhrases": ["thinking"]
+        "customWittyPhrases": [
+            "thinking"
+        ],
+        "__useFullWidth": true,
+        "__useAlternateBuffer": true,
+        "accessibility": {
+            "disableLoadingPhrases": true
+        }
     },
     "tools": {
-        "allowed": [
+        "core": [
             "run_shell_comand(blaze build)",
             "run_shell_comand(blaze test)",
             "run_shell_comand(blaze run)",

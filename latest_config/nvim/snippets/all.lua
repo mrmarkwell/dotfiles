@@ -3,6 +3,7 @@ return {
   -- important! fmt does not return a snippet, it returns a table of nodes.
   s('snip_tracing', t('#include "android/aicore/backend/api/common/tracing.h"')),
   s('RUNTIME', t('AICORE_RUNTIME_FUNCTION(')),
+  s('RETLE', t('RET_CHECK_LE(embedding_metadata.size(), ')),
   s('RRR', t('AICORE_RUNTIME_FUNCTION(')),
   s(
     'BEGIN_PUBLIC',
@@ -21,7 +22,7 @@ return {
       }
     )
   ),
-  s('BUG', t('BUG=427983349')),
+  s('BUG', t('BUG=425783496')),
   s('NO_BUG', t('NO_BUG=no bug')),
   s(
     'TODO',
@@ -31,7 +32,7 @@ return {
       ]],
       {
         -- i(1) is at nodes[1]
-        i(1, '427983349'),
+        i(1, '425783496'),
       }
     )
   ),

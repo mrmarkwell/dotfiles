@@ -311,6 +311,11 @@ if not vim.loop.fs_stat(lazypath) then
 end ---@diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)
 
+-- NOTE markwell abbreviations start
+
+-- Use :wnoformat to write without autoformatting.
+vim.cmd('cnoreabbrev wnoformat noautocmd w')
+
 -- NOTE: markwell functions start
 
 -- Function to open the most recent N buffers from vim.v.oldfiles, skipping already open files
