@@ -1,0 +1,200 @@
+[[rule]]
+toolName = "resolve_google3_path"
+decision = "allow"
+priority = 200
+
+[[rule]]
+toolName = "activate_skill"
+decision = "allow"
+priority = 200
+
+[[rule]]
+toolName = "search_for_files_codesearch"
+decision = "allow"
+priority = 200
+
+[[rule]]
+toolName = "get_references"
+decision = "allow"
+priority = 200
+
+[[rule]]
+toolName = "read_sponge_test_failure_logs"
+decision = "allow"
+priority = 200
+
+[[rule]]
+toolName = "read_sponge_test_logs"
+decision = "allow"
+priority = 200
+
+[[rule]]
+toolName = "get_critique_comments"
+decision = "allow"
+priority = 200
+
+[[rule]]
+toolName = "get_critique_analysis"
+decision = "allow"
+priority = 200
+
+[[rule]]
+toolName = "render_issue"
+decision = "allow"
+priority = 200
+
+[[rule]]
+toolName = "get_build_results"
+decision = "allow"
+priority = 200
+
+[[rule]]
+toolName = "fetch_resource"
+decision = "allow"
+priority = 200
+
+[[rule]]
+toolName = "get_gpaste"
+decision = "allow"
+priority = 200
+
+[[rule]]
+toolName = "search_questions"
+decision = "allow"
+priority = 200
+
+[[rule]]
+toolName = "enter_plan_mode"
+decision = "allow"
+priority = 200
+
+[[rule]]
+toolName = "buganizer_get_bugs"
+decision = "allow"
+priority = 200
+
+[[rule]]
+toolName = "buganizer_list_components"
+decision = "allow"
+priority = 200
+
+[[rule]]
+toolName = "get_current_workspace"
+decision = "allow"
+priority = 200
+
+[[rule]]
+toolName = "get_yaqs_question"
+decision = "allow"
+priority = 200
+
+[[rule]]
+toolName = "internal_search"
+decision = "allow"
+priority = 200
+
+[[rule]]
+toolName = "search_changelists"
+decision = "allow"
+priority = 200
+
+[[rule]]
+toolName = "search_yaqs"
+decision = "allow"
+priority = 200
+
+[[rule]]
+toolName = "run_shell_command"
+decision = "allow"
+priority = 200
+commandPrefix = "build_cleaner"
+
+[[rule]]
+toolName = "run_shell_command"
+decision = "allow"
+priority = 200
+commandPrefix = "hg pstatus"
+
+[[rule]]
+toolName = "run_shell_command"
+decision = "allow"
+priority = 200
+commandPrefix = "hg pdiff"
+
+[[rule]]
+toolName = "run_shell_command"
+decision = "allow"
+priority = 200
+commandPrefix = "hg status"
+
+[[rule]]
+toolName = "run_shell_command"
+decision = "allow"
+priority = 200
+commandPrefix = "hg diff"
+
+[[rule]]
+toolName = "run_shell_command"
+decision = "allow"
+priority = 200
+commandPrefix = "g4 fix"
+
+[[rule]]
+toolName = "run_shell_command"
+decision = "allow"
+priority = 200
+commandPrefix = "hg fix"
+
+[[rule]]
+toolName = "run_shell_command"
+decision = "allow"
+priority = 200
+commandPrefix = "jj fix"
+
+[[rule]]
+toolName = "run_shell_command"
+decision = "allow"
+priority = 200
+commandPrefix = "g4 lint"
+
+[[rule]]
+toolName = "run_shell_command"
+decision = "allow"
+priority = 200
+commandPrefix = "glint"
+
+[[rule]]
+toolName = "run_shell_command"
+decision = "allow"
+priority = 200
+commandPrefix = "blaze build"
+
+[[rule]]
+toolName = "run_shell_command"
+decision = "allow"
+priority = 200
+commandPrefix = "blaze test"
+
+[[rule]]
+toolName = "run_shell_command"
+decision = "allow"
+priority = 200
+commandPrefix = "grep"
+
+[[rule]]
+toolName = "run_shell_command"
+decision = "allow"
+priority = 200
+commandPrefix = "vcstool"
+
+[[rule]]
+toolName = "run_shell_command"
+decision = "allow"
+priority = 200
+commandPrefix = "pwd"
+
+[[rule]]
+toolName = "run_shell_command"
+decision = "allow"
+priority = 200
+commandPrefix = "/google/bin/releases/piper-fig/vcstool/vcstool debug-vcs-string"
