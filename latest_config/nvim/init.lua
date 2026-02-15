@@ -56,6 +56,9 @@ NOTE: Reminders of cool functionality.
 
 -- NOTE: markwell's settings:
 
+-- Turn on extreme LSP logging to debug something. Use :LspLog to see it.
+-- vim.lsp.set_log_level('debug')
+
 vim.opt.nu = true
 vim.opt.relativenumber = true
 
