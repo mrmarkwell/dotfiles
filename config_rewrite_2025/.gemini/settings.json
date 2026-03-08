@@ -1,24 +1,29 @@
 {
-    "context": {
-        "fileFiltering": {
-            "enableRecursiveFileSearch": false
-        }
-    },
-    "general": {
-        "preferredEditor": "vim",
-        "enablePromptCompletion": true,
-        "vimMode": true
-    },
-    "ui": {
-        "theme": "Dracula",
-        "customWittyPhrases": [
-            "thinking"
-        ],
-        "__useFullWidth": true,
-        "__useAlternateBuffer": true,
-        "accessibility": {
-            "disableLoadingPhrases": true,
-            "enableLoadingPhrases": false
-        }
+  "context": {
+    "fileFiltering": {
+      "enableRecursiveFileSearch": false
     }
+  },
+  "general": {
+    "preferredEditor": "vim",
+    "enablePromptCompletion": true,
+    "vimMode": true,
+    "sessionRetention": {
+      "warningAcknowledged": true,
+      "enabled": true,
+      "maxAge": "120d"
+    }
+  },
+  "ui": {
+    "theme": "Dracula",
+    "customWittyPhrases": [
+      "thinking"
+    ],
+    "__useFullWidth": true,
+    "__useAlternateBuffer": true,
+    "accessibility": {
+      "enableLoadingPhrases": false
+    },
+    "loadingPhrases": "off"
+  }
 }
