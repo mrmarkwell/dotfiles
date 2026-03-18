@@ -356,6 +356,55 @@ vim.api.nvim_create_user_command('OpenLastNBuffers', function(opts)
   open_last_n_buffers(tonumber(opts.args))
 end, { nargs = 1 })
 
+-- Open a diff of the current buffer unsaved edits.
+vim.api.nvim_create_user_command('DiffEdits', function()
+  -- Get the file path of the current buffer
+  local current_file = vim.api.nvim_buf_get_name(0)
+
+  if current_file == '' then
+    vim.notify('No file associated with this buffer', vim.log.levels.WARN)
+    return
+  end
+
+  -- Enable diff mode for the current window (your edited version)
+  vim.cmd('diffthis')
+
+  -- Open a vertical split to the left for the original file
+  vim.cmd('leftabove vnew')
+
+  -- Read the saved file from disk and populate the new buffer
+  local lines = vim.fn.readfile(current_file)
+  vim.api.nvim_buf_set_lines(0, 0, -1, false, lines)
+
+  -- Make the new buffer a temporary "scratch" buffer
+  vim.bo.buftype = 'nofile'
+  vim.bo.bufhidden = 'wipe'
+  vim.bo.swapfile = false
+  vim.bo.modifiable = false
+
+  -- Enable diff mode for the scratch window
+  vim.cmd('diffthis')
+
+  -- Jump back to your original, edited window
+  vim.cmd('wincmd p')
+end, { desc = 'Compare unsaved buffer with the saved file on disk' })
+
+-- Create the command to clean up the diff view
+vim.api.nvim_create_user_command('DiffEditsClose', function()
+  -- 1. Turn off diff mode globally for all windows in the current tab
+  vim.cmd('diffoff!')
+
+  -- 2. Iterate through all open windows to find and close the scratch buffer
+  for _, win in ipairs(vim.api.nvim_list_wins()) do
+    local buf = vim.api.nvim_win_get_buf(win)
+
+    -- Identify the scratch buffer by its 'nofile' buftype
+    if vim.api.nvim_get_option_value('buftype', { buf = buf }) == 'nofile' then
+      vim.api.nvim_win_close(win, true)
+    end
+  end
+end, { desc = 'Close the DiffSaved scratch buffer and exit diff mode' })
+
 -- Pretty print command - for mapping to an nvim user command "PrettyPrint".
 -- Usage:
 --  :PrettyPrint(vim.opt.hlsearch)
@@ -524,6 +573,8 @@ end
 
 vim.keymap.set('n', '<leader>C', RotateColorscheme, { desc = 'Rotate color scheme' })
 vim.keymap.set('n', '<leader>o', ':lua open_last_n_buffers(1)<CR>', { desc = 'Reopen last buffer', noremap = true, silent = true })
+vim.keymap.set('n', '<leader>de', ':DiffEdits<CR>', { desc = '[D]iff [E]dits', noremap = true, silent = true })
+vim.keymap.set('n', '<leader>dc', '<cmd>DiffEditsClose<CR>', { desc = 'Quit DiffEdits view', noremap = true, silent = true })
 
 -- NOTE: end my functions.
 
