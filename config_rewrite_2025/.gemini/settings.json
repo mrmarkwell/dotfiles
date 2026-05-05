@@ -14,6 +14,7 @@
       "maxAge": "120d"
     }
   },
+  "experimental": { "enableAgents": true },
   "ui": {
     "theme": "Dracula",
     "customWittyPhrases": [

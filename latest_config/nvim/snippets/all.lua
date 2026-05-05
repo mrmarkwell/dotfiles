@@ -22,7 +22,7 @@ return {
       }
     )
   ),
-  s('BUG', t('BUG=425783496')),
+  s('BUG', t('BUG=498784175')),
   s('NO_BUG', t('NO_BUG=no bug')),
   s(
     'TODO',
